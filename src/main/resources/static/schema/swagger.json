@@ -1,0 +1,340 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.0.1-SNAPSHOT",
+    "title": "Współogarniacz server REST API",
+    "contact": {
+      "name": "Paulina Szwed",
+      "url": "https://github.com/Delebrith",
+      "email": "paulina.szwed.1996@gmail.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "user",
+      "description": "All account-related operations"
+    }
+  ],
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization"
+    }
+  },
+  "paths": {
+    "/user/login":{
+      "post": {
+        "operationId": "login",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request authorization token with credentials",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "credentials",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCredentials"
+            },
+            "description": "User's credentials"
+          }
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/AuthorizationToken"
+            },
+            "description": "If valid credentials were provided"
+          },
+          "404": {
+            "description": "If invalid credentials were provided"
+          }
+        }
+      }
+    },
+    "/user/register":{
+      "post": {
+        "operationId": "register",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request registration with user data",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            },
+            "description": "User details"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "If valid credentials were provided"
+          },
+          "400": {
+            "description": "If invalid data was provided"
+          }
+        }
+      }
+    },
+    "/user/password/change":{
+      "post": {
+        "operationId": "changePassword",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request password change",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Password"
+            },
+            "description": "User's new password"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "If password was successfully changed"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/user/password/reset":{
+      "post": {
+        "operationId": "resetPassword",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request new randomly generated password",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "credentials",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserCredentials"
+            },
+            "description": "User's credentials (email)"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If valid email was provided"
+          },
+          "404": {
+            "description": "If invalid credentials were provided"
+          }
+        }
+      }
+    },
+    "/user/me":{
+      "get": {
+        "operationId": "getMyDetails",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request logged-in user details",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "If user was found",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/user/deregister":{
+      "delete": {
+        "operationId": "deregister",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request deregistration",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "If deregistration was completed"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "code", "message", "uri"
+      ],
+      "example": {
+        "code": 404,
+        "message": "Could not find the user for given parameters",
+        "uri": "/user/login"
+      }
+    },
+    "UserCredentials": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "format": "password"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "example": {
+        "email": "user@mail.com",
+        "password": "password"
+      }
+    },
+    "AuthorizationToken": {
+      "type": "object",
+      "description": "Wraper for authorization tokens issued by the system",
+      "properties": {
+        "token": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "example": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "int64"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "password": {
+          "type": "string",
+          "format": "password"
+        },
+        "name": {
+          "type": "string"
+        },
+        "authorities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Authority"
+          }
+        }
+      },
+      "required": [
+        "email", "name", "dateOfBirth", "description"
+      ],
+      "example": {
+        "email": "user@mail.com",
+        "name": "User User"
+      }
+    },
+    "Authority": {
+      "type": "string",
+      "enum": [
+        "USER", "ADMIN"
+      ]
+    },
+    "Password": {
+      "type": "object",
+      "description": "Wrapper for user's new password to be set",
+      "properties": {
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "password"
+      ],
+      "example": {
+        "password": "myNewPassword"
+      }
+    }
+  }
+}
