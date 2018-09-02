@@ -1,7 +1,6 @@
 package com.purplepanda.wspologarniacz.user
 
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException
-import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException
 import io.jsonwebtoken.Jwts
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.userdetails.UserDetails
@@ -17,8 +16,9 @@ class UserServiceImplSpecification extends Specification {
 
     // mocked
     private UserRepository userRepository
+    private RequestRepository requestRepository;
     private BCryptPasswordEncoder passwordEncoder
-    private ApplicationEventPublisher eventPublisher;
+    private ApplicationEventPublisher eventPublisher
 
     // data
     private String secret
@@ -38,7 +38,7 @@ class UserServiceImplSpecification extends Specification {
         userRepository = Mock(UserRepository.class)
         passwordEncoder = new BCryptPasswordEncoder()
         eventPublisher = Mock(ApplicationEventPublisher.class)
-        userService = new UserServiceImpl(userRepository, secret, eventPublisher)
+        userService = new UserServiceImpl(userRepository, requestRepository, secret, eventPublisher)
     }
 
     void "user should be authenticated with existing email and valid password"() {

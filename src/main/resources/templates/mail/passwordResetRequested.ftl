@@ -9,7 +9,10 @@
 <p>Otrzymaliśmy prośbę o zresetowanie twojego hasła.</p>
 <p>
     Aby zresetować hasło kliknij w poniższy link: <br>
-    ${link}
+    https://www.wspologarniacz-staging.com${resetUrl}
+</p>
+<p>
+    Po kliknięciu w link zostanie dla ciebie wygenerowane nowe hasło.
 </p>
 <p>
     Pozdrawiamy, <br>

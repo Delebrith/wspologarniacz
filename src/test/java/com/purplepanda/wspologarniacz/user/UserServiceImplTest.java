@@ -28,13 +28,15 @@ public class UserServiceImplTest {
     private UserRepository userRepository;
     @Mock
     private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private RequestRepository requestRepository;
     private String secret = "super_secret";
 
     UserServiceImpl userService;
 
     @Before
     public void init() {
-        userService = new UserServiceImpl(userRepository, secret, eventPublisher);
+        userService = new UserServiceImpl(userRepository, requestRepository, secret, eventPublisher);
     }
 
     @WithMockUser(USERNAME)

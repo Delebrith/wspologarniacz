@@ -12,8 +12,6 @@ import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException
 import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
-import java.time.LocalDate
-
 class UserApiDelegateImplSpec extends Specification {
 
     //Mocked
@@ -165,23 +163,23 @@ class UserApiDelegateImplSpec extends Specification {
         thrown(IllegalStateException.class)
     }
 
-    void "existing user should reset his password"() {
+    void "existing user should request reset of his password"() {
         given: "existing USER"
-        userService.resetPassword(credentialsDto.email) >> { }
+        userService.requestPasswordReset(credentialsDto.email) >> { }
 
         when: "password reset is invoked"
-        ResponseEntity<Void> result = userApiDelegate.resetPassword(credentialsDto)
+        ResponseEntity<Void> result = userApiDelegate.requestPasswordReset(credentialsDto)
 
         then: "status is successful"
         result.statusCode.'2xxSuccessful'
     }
 
-    void "non-existing user should not reset his password"() {
+    void "non-existing user should not request reset of  his password"() {
         given: "non-existing USER"
-        userService.resetPassword(credentialsDto.email) >> { throw new UserNotFoundException() }
+        userService.requestPasswordReset(credentialsDto.email) >> { throw new UserNotFoundException() }
 
         when: "password change is invoked"
-        ResponseEntity<Void> result = userApiDelegate.resetPassword(credentialsDto)
+        ResponseEntity<Void> result = userApiDelegate.requestPasswordReset(credentialsDto)
 
         then: "Exception is thrown"
         thrown(UserNotFoundException.class)

@@ -10,5 +10,6 @@ public interface UserService {
     User register(User user);
     void changePassword(User user, String password);
     void deregister(User user);
-    void resetPassword(String email);
+    void resetPassword(Long requestId, Long userId);
+    void requestPasswordReset(String email);
 }

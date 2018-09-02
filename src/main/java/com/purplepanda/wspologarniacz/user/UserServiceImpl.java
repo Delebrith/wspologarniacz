@@ -1,11 +1,15 @@
 package com.purplepanda.wspologarniacz.user;
 
+import com.purplepanda.wspologarniacz.user.event.PasswordResetEvent;
+import com.purplepanda.wspologarniacz.user.event.PasswordResetRequestEvent;
 import com.purplepanda.wspologarniacz.user.event.UserCreatedEvent;
+import com.purplepanda.wspologarniacz.user.exception.IncorrectRequestState;
+import com.purplepanda.wspologarniacz.user.exception.RequestNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException;
+import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.bytebuddy.utility.RandomString;
-import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Date;
@@ -24,15 +29,18 @@ import java.util.Date;
 class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final RequestRepository requestRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final byte[] secretKey;
     private final ApplicationEventPublisher eventPublisher;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
+                           RequestRepository requestRepository,
                            String secretKey,
                            ApplicationEventPublisher eventPublisher) {
         this.userRepository = userRepository;
+        this.requestRepository = requestRepository;
         this.eventPublisher = eventPublisher;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.secretKey = secretKey.getBytes();
@@ -100,8 +108,32 @@ class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void resetPassword(String email) {
-        throw new NotYetImplementedException();
+    public void requestPasswordReset(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        Request resetRequest = Request.builder()
+                .requester(user)
+                .limit(LocalDateTime.now().plusMinutes(2))
+                .build();
+        resetRequest = requestRepository.save(resetRequest);
+        eventPublisher.publishEvent(new PasswordResetRequestEvent(user,
+                "/user/password/reset/confirm/" + user.getId() + "/" + resetRequest.getId()));
+    }
+
+    @Override
+    public void resetPassword(Long requestId, Long userId) {
+        Request request = requestRepository.findById(requestId).orElseThrow(RequestNotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if (!request.getRequester().equals(user) || LocalDateTime.now().isAfter(request.getLimit())){
+            throw new IncorrectRequestState();
+        }
+        user.setPassword(generatePassword());
+        eventPublisher.publishEvent(PasswordResetEvent.builder()
+                .user(user)
+                .build());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        requestRepository.delete(request);
     }
 
     private String generatePassword() {

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PasswordResetEvent {
+public class PasswordResetRequestEvent {
     private User user;
+    private String resetUrl;
 }

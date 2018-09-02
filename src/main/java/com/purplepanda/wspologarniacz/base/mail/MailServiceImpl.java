@@ -2,6 +2,7 @@ package com.purplepanda.wspologarniacz.base.mail;
 
 import com.purplepanda.wspologarniacz.base.mail.template.TemplateService;
 import com.purplepanda.wspologarniacz.user.event.PasswordResetEvent;
+import com.purplepanda.wspologarniacz.user.event.PasswordResetRequestEvent;
 import com.purplepanda.wspologarniacz.user.event.UserCreatedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -55,6 +57,15 @@ class MailServiceImpl implements MailService {
         send(event.getUser().getEmail(), "Account in BoardUp created",
                 templateService.merge("mail/accountCreated.ftl",
                         Collections.singletonMap("user", event.getUser())), true);
+    }
+
+    @EventListener
+    private void handleEvent(PasswordResetRequestEvent event) {
+        Map<String, Object> data = Collections.emptyMap();
+        data.put("user", event.getUser());
+        data.put("resetUrl", event.getResetUrl());
+        send(event.getUser().getEmail(), "BoardUp password reset",
+                templateService.merge("mail/passwordResetRequested.ftl", data), true);
     }
 
     @EventListener

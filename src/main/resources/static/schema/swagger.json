@@ -135,7 +135,7 @@
     },
     "/user/password/reset":{
       "post": {
-        "operationId": "resetPassword",
+        "operationId": "requestPasswordReset",
         "tags": [
           "user"
         ],
@@ -155,6 +155,44 @@
               "$ref": "#/definitions/UserCredentials"
             },
             "description": "User's credentials (email)"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If valid email was provided"
+          },
+          "404": {
+            "description": "If invalid credentials were provided"
+          }
+        }
+      }
+    },
+    "/user/password/reset/confirm/{userId}/{requestId}": {
+      "get": {
+        "operationId": "resetPassword",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request new randomly generated password",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "description": "ID of user whose password is going to be reset"
+          },
+          {
+            "name": "requestId",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "description": "ID of request for password reset"
           }
         ],
         "responses": {

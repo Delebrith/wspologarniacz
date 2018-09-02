@@ -11,6 +11,7 @@ import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -63,8 +64,14 @@ public class UserApiDelegateImpl implements UserApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Void> resetPassword(UserCredentialsDto credentials) {
-        userService.resetPassword(credentials.getEmail());
+    public ResponseEntity<Void> requestPasswordReset(UserCredentialsDto credentials) {
+        userService.requestPasswordReset(credentials.getEmail());
+        return ResponseEntity.accepted().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> resetPassword(Long userId, Long requestId) {
+        userService.resetPassword(requestId, userId);
         return ResponseEntity.accepted().build();
     }
 }
