@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Request {
+public class Token {
+
+    // TODO 
+    //https://www.baeldung.com/spring-security-registration-i-forgot-my-password
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

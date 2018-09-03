@@ -110,21 +110,21 @@ class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void requestPasswordReset(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        Request resetRequest = Request.builder()
+        Token resetToken = Token.builder()
                 .requester(user)
                 .limit(LocalDateTime.now().plusMinutes(2))
                 .build();
-        resetRequest = requestRepository.save(resetRequest);
+        resetToken = requestRepository.save(resetToken);
         eventPublisher.publishEvent(new PasswordResetRequestEvent(user,
-                "/user/password/reset/confirm/" + user.getId() + "/" + resetRequest.getId()));
+                "/user/password/reset/confirm/" + user.getId() + "/" + resetToken.getId()));
     }
 
     @Override
     public void resetPassword(Long requestId, Long userId) {
-        Request request = requestRepository.findById(requestId).orElseThrow(RequestNotFoundException::new);
+        Token token = requestRepository.findById(requestId).orElseThrow(RequestNotFoundException::new);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        if (!request.getRequester().equals(user) || LocalDateTime.now().isAfter(request.getLimit())){
+        if (!token.getRequester().equals(user) || LocalDateTime.now().isAfter(token.getLimit())){
             throw new IncorrectRequestState();
         }
         user.setPassword(generatePassword());
@@ -133,7 +133,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
                 .build());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        requestRepository.delete(request);
+        requestRepository.delete(token);
     }
 
     private String generatePassword() {

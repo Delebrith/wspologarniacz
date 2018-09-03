@@ -36,7 +36,8 @@ public class User implements UserDetails {
     private String name;
 
     @NotBlank
-    private Boolean active;
+    @Builder.Default
+    private Boolean active = false;
 
     @ElementCollection(targetClass = AuthorityName.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "USER_AUTHORITIES", joinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "ID"))
