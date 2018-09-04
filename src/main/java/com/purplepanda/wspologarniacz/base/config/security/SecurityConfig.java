@@ -18,7 +18,8 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] PUBLIC_ANT_PATTERNS = {
-            "/public/**", "/user/login", "/user/register/**", "/user/password/reset/**", "/"
+            "/public/**", "/user/login", "/user/register/**", "/user/password/reset/**",
+            "/", "/favicon.ico"
     };
 
     private final UserDetailsService userDetailsService;

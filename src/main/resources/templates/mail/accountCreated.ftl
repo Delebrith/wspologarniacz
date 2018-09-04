@@ -5,7 +5,7 @@
     </style>
 </head>
 <body>
-<h5>Witaj, ${user.name}!</h5>
+<h4>Witaj, ${user.name}!</h4>
 <p> Właśnie udało ci się utworzyć konto w aplikacji Współogarniacz! </p>
 <p>
     Aktywuj swoje konto, klikając w link: ${link}
