@@ -94,6 +94,36 @@
         }
       }
     },
+    "/user/register/{userId}/confirm":{
+      "get": {
+        "operationId": "confirm",
+        "tags": [
+          "user"
+        ],
+        "summary": "Confirm registration",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "User details"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "If valid credentials were provided"
+          },
+          "400": {
+            "description": "If invalid data was provided"
+          }
+        }
+      }
+    },
     "/user/password/change":{
       "post": {
         "operationId": "changePassword",
@@ -133,13 +163,13 @@
         }
       }
     },
-    "/user/password/reset":{
+    "/user/password/reset/request":{
       "post": {
         "operationId": "requestPasswordReset",
         "tags": [
           "user"
         ],
-        "summary": "Request new randomly generated password",
+        "summary": "Request password reset",
         "consumes": [
           "application/json"
         ],
@@ -167,30 +197,34 @@
         }
       }
     },
-    "/user/password/reset/confirm/{userId}/{requestId}": {
-      "get": {
+    "/user/password/reset/confirm/{token}": {
+      "post": {
         "operationId": "resetPassword",
         "tags": [
           "user"
         ],
         "summary": "Request new randomly generated password",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "userId",
-            "in": "path",
-            "type": "integer",
-            "format": "int64",
+            "name": "password",
+            "in": "body",
             "required": true,
-            "description": "ID of user whose password is going to be reset"
+            "schema": {
+              "$ref": "#/definitions/Password"
+            },
+            "description": "User's credentials (email)"
           },
           {
-            "name": "requestId",
+            "name": "token",
             "in": "path",
-            "type": "integer",
-            "format": "int64",
+            "type": "string",
+            "format": "uuid",
             "required": true,
             "description": "ID of request for password reset"
           }
@@ -346,10 +380,11 @@
         }
       },
       "required": [
-        "email", "name", "dateOfBirth", "description"
+        "email", "name", "password"
       ],
       "example": {
         "email": "user@mail.com",
+        "password": "password",
         "name": "User User"
       }
     },

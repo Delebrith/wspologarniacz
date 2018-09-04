@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
@@ -13,16 +15,22 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Token {
+class RequestToken {
 
-    // TODO 
+    // TODO
     //https://www.baeldung.com/spring-security-registration-i-forgot-my-password
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Column(unique = true)
+    private String token;
+
     @ManyToOne
     private User requester;
-    private LocalDateTime limit;
+
+    @NotNull
+    private LocalDateTime expiresAt;
 }

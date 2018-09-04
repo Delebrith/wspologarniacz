@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserCreatedEvent {
     private User user;
+    private String confirmationUrl;
 }

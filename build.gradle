@@ -74,7 +74,7 @@ jacocoTestReport {
 
 swaggerSources {
 	api {
-		inputFile = file('src/main/resources/static/schema/swagger.json')
+		inputFile = file('src/main/resources/static/public/schema/swagger.json')
 		code {
 			outputDir = file("$buildDir/generated/source/swagger/")
 			language = 'spring'

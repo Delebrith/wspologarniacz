@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 @Component
 public class UserApiDelegateImpl implements UserApiDelegate {
@@ -70,8 +71,14 @@ public class UserApiDelegateImpl implements UserApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Void> resetPassword(Long userId, Long requestId) {
-        userService.resetPassword(requestId, userId);
+    public ResponseEntity<Void> resetPassword(PasswordDto password, UUID token) {
+        userService.resetPassword(token.toString(), password.getPassword());
+        return ResponseEntity.accepted().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> confirm(Long userId) {
+        userService.confirmRegistration(userId);
         return ResponseEntity.accepted().build();
     }
 }

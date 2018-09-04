@@ -1,6 +1,7 @@
 package com.purplepanda.wspologarniacz.user
 
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException
+import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException
 import io.jsonwebtoken.Jwts
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.core.userdetails.UserDetails
@@ -16,18 +17,20 @@ class UserServiceImplSpecification extends Specification {
 
     // mocked
     private UserRepository userRepository
-    private RequestRepository requestRepository;
+    private RequestTokenRepository requestRepository;
     private BCryptPasswordEncoder passwordEncoder
     private ApplicationEventPublisher eventPublisher
 
     // data
     private String secret
+    private String serverUrl
     private String email
     private String password
     private User user
 
     void setup() {
         secret = "5up3r53cr3t"
+        serverUrl = "http://localhost:8080"
         email = "some@email.com"
         password = "some-password"
         user = User.builder()
@@ -38,13 +41,14 @@ class UserServiceImplSpecification extends Specification {
         userRepository = Mock(UserRepository.class)
         passwordEncoder = new BCryptPasswordEncoder()
         eventPublisher = Mock(ApplicationEventPublisher.class)
-        userService = new UserServiceImpl(userRepository, requestRepository, secret, eventPublisher)
+        userService = new UserServiceImpl(userRepository, requestRepository, secret, eventPublisher, serverUrl)
     }
 
-    void "user should be authenticated with existing email and valid password"() {
+    void "activated user should be authenticated with existing email and valid password"() {
         given: "valid password"
         user = User.builder()
                 .email(email)
+                .active(true)
                 .password("\$2a\$04\$PVp1C6aQcl3ris4303XRbuJHng4yE8Y8Uke.2i5Nez1g/2n0KfMuG")
                 .build()
 
@@ -56,6 +60,23 @@ class UserServiceImplSpecification extends Specification {
 
         then: "authentication succeeds"
         result == Optional.ofNullable(user)
+    }
+
+    void "not activated user should not be authenticated with existing email and invalid password"() {
+        given: "invalid password"
+        user = User.builder()
+                .email(email)
+                .password("invalid")
+                .build()
+
+        and: "existing email"
+        userRepository.findByEmail(email) >> Optional.ofNullable(user)
+
+        when: "USER tries authentication"
+        Optional<User> result = userService.authenticate(email, password)
+
+        then: "authentication fails"
+        result == Optional.empty()
     }
 
     void "user should not be authenticated with existing email and invalid password"() {
@@ -126,7 +147,7 @@ class UserServiceImplSpecification extends Specification {
         userRepository.findById(user.id) >> Optional.ofNullable(user)
 
         when: "getting info USER is invoked"
-        Optional<User> result = userService.getUserInfo(user.id)
+        Optional<User> result = userService.getUser(user.id)
 
         then: "USER info is loaded"
         result == Optional.ofNullable(user)
@@ -137,7 +158,7 @@ class UserServiceImplSpecification extends Specification {
         userRepository.findById(user.id) >> Optional.empty()
 
         when: "loading USER is invoked"
-        Optional<User> result = userService.getUserInfo(user.id)
+        Optional<User> result = userService.getUser(user.id)
 
         then: "USER info is not loaded"
         result == Optional.empty()
@@ -165,6 +186,27 @@ class UserServiceImplSpecification extends Specification {
 
         then: "Exception is thrown"
         thrown(UserAlreadyExistsException)
+    }
+
+    void "registered user should be activated"() {
+        given: "existing USER's email"
+        userRepository.findById(user.id) >> Optional.ofNullable(user)
+
+        when: "confirmation USER is invoked"
+        userService.confirmRegistration(user.id)
+
+        then: "USER is activated"
+    }
+
+    void "non-registered user should not be activated"() {
+        given: "non-existing USER's email"
+        userRepository.findById(user.id) >> Optional.empty()
+
+        when: "confirmation USER is invoked"
+        userService.confirmRegistration(user.id)
+
+        then: "exception is thrown"
+        thrown(UserNotFoundException)
     }
 
     void "password of valid user should be changed"() {

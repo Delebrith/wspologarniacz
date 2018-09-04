@@ -1,16 +1,15 @@
 package com.purplepanda.wspologarniacz.user;
 
-import com.purplepanda.wspologarniacz.user.event.PasswordResetEvent;
 import com.purplepanda.wspologarniacz.user.event.PasswordResetRequestEvent;
 import com.purplepanda.wspologarniacz.user.event.UserCreatedEvent;
-import com.purplepanda.wspologarniacz.user.exception.IncorrectRequestState;
+import com.purplepanda.wspologarniacz.user.exception.IncorrectToken;
 import com.purplepanda.wspologarniacz.user.exception.RequestNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException;
 import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,19 +28,22 @@ import java.util.Date;
 class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RequestRepository requestRepository;
+    private final RequestTokenRepository requestTokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final byte[] secretKey;
     private final ApplicationEventPublisher eventPublisher;
+    private final String serverUrl;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
-                           RequestRepository requestRepository,
+                           RequestTokenRepository requestTokenRepository,
                            String secretKey,
-                           ApplicationEventPublisher eventPublisher) {
+                           ApplicationEventPublisher eventPublisher,
+                           @Value("${application.server-url}") String serverUrl) {
         this.userRepository = userRepository;
-        this.requestRepository = requestRepository;
+        this.requestTokenRepository = requestTokenRepository;
         this.eventPublisher = eventPublisher;
+        this.serverUrl = serverUrl;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.secretKey = secretKey.getBytes();
     }
@@ -52,7 +54,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Optional<User> getUserInfo(Long id) {
+    public Optional<User> getUser(Long id) {
         return userRepository.findById(id);
     }
 
@@ -61,7 +63,8 @@ class UserServiceImpl implements UserService, UserDetailsService {
         final Optional<User> user = userRepository.findByEmail(email);
         final boolean passwordMatches =
                 user.map(u -> passwordEncoder.matches(password, u.getPassword())).orElse(false);
-        return passwordMatches ? user : Optional.empty();
+        final boolean active = user.map(u ->  u.getActive() ).orElse(false);
+        return (passwordMatches && active) ? user : Optional.empty();
     }
 
     @Override
@@ -87,13 +90,15 @@ class UserServiceImpl implements UserService, UserDetailsService {
             throw new UserAlreadyExistsException();
 
         user.setAuthorities(Collections.singletonList(AuthorityName.USER));
-        user.setPassword(generatePassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User created = userRepository.save(user);
+
         eventPublisher.publishEvent(UserCreatedEvent.builder()
-                .user(user)
+                .user(created)
+                .confirmationUrl(serverUrl + "/#confirm-registration?id=" + created.getId())
                 .build());
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        return created;
     }
 
     @Override
@@ -110,33 +115,35 @@ class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void requestPasswordReset(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
-        Token resetToken = Token.builder()
+        RequestToken resetRequestToken = RequestToken.builder()
                 .requester(user)
-                .limit(LocalDateTime.now().plusMinutes(2))
+                .expiresAt(LocalDateTime.now().plusMinutes(2))
                 .build();
-        resetToken = requestRepository.save(resetToken);
+        resetRequestToken = requestTokenRepository.save(resetRequestToken);
         eventPublisher.publishEvent(new PasswordResetRequestEvent(user,
-                "/user/password/reset/confirm/" + user.getId() + "/" + resetToken.getId()));
+                serverUrl + "/#password-reset?token=" + resetRequestToken.getId()));
     }
 
     @Override
-    public void resetPassword(Long requestId, Long userId) {
-        Token token = requestRepository.findById(requestId).orElseThrow(RequestNotFoundException::new);
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public void confirmRegistration(Long userId) {
+        User user = getUser(userId).orElseThrow(UserNotFoundException::new);
+        user.setActive(true);
+        userRepository.save(user);
+    }
 
-        if (!token.getRequester().equals(user) || LocalDateTime.now().isAfter(token.getLimit())){
-            throw new IncorrectRequestState();
+    @Override
+    public void resetPassword(String token, String password) {
+        RequestToken requestToken = requestTokenRepository.findByToken(token).orElseThrow(RequestNotFoundException::new);
+
+        if (LocalDateTime.now().isAfter(requestToken.getExpiresAt())){
+            throw new IncorrectToken();
         }
-        user.setPassword(generatePassword());
-        eventPublisher.publishEvent(PasswordResetEvent.builder()
-                .user(user)
-                .build());
+
+        User user  = requestToken.getRequester();
+        user.setPassword(password);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        requestRepository.delete(token);
+        requestTokenRepository.delete(requestToken);
     }
 
-    private String generatePassword() {
-        return RandomString.make(8);
-    }
 }

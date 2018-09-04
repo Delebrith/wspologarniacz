@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class User implements UserDetails {
     @NotBlank
     private String name;
 
-    @NotBlank
+    @NotNull
     @Builder.Default
     private Boolean active = false;
 

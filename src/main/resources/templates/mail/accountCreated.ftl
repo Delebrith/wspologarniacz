@@ -8,8 +8,7 @@
 <h5>Witaj, ${user.name}!</h5>
 <p> Właśnie udało ci się utworzyć konto w aplikacji Współogarniacz! </p>
 <p>
-    Twoje pierwsze (automatycznie wygenerowane) hasło to: <b>${user.password}</b>.
-    Zmień swoje hasło po pierwszym logowaniu.
+    Aktywuj swoje konto, klikając w link: ${link}
 </p>
 <p>
     Baw się dobrze, używając naszej aplikacji!
