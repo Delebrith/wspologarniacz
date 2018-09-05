@@ -36,7 +36,7 @@ jobs:
         app:
           develop: board-up-staging
       after_deploy:
-        - curl http://board-up-staging.herokuapp.com/public/swagger-ui.html
+        - curl http://wspologarniacz-staging.herokuapp.com/public/swagger-ui.html
 
     - stage: deployment to production
       if: branch = master
@@ -54,5 +54,5 @@ jobs:
         app:
           master: board-up
       after_deploy:
-        - curl http://board-up.herokuapp.com/public/swagger-ui.html
+        - curl http://wspologarniacz.herokuapp.com/public/swagger-ui.html
 
