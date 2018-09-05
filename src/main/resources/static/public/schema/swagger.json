@@ -203,7 +203,7 @@
         "tags": [
           "user"
         ],
-        "summary": "Request new randomly generated password",
+        "summary": "Confirm your new password",
         "consumes": [
           "application/json"
         ],

@@ -1,0 +1,22 @@
+body {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.navbar {
+    background-color: #7766DD99
+
+}
+
+.btn-primary {
+    font-weight: 500;
+    background-color: white;
+    color: #66BBBBFF;
+    border-color: #66BBBBDD;
+}
+
+.btn-primary:hover {
+    font-weight: 500;
+    background-color: #66BBBBDD;
+    color: white;
+    border-color: #66BBBBDD;
+}
