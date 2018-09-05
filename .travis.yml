@@ -36,7 +36,7 @@ jobs:
         app:
           develop: wspologarniacz-staging
       after_deploy:
-        - curl http://wspologarniacz-staging.herokuapp.com/public/swagger-ui.html
+        - curl http://wspologarniacz-staging.herokuapp.com/swagger-ui.html
 
     - stage: deployment to production
       if: branch = master
@@ -54,5 +54,5 @@ jobs:
         app:
           master: wspologarniacz
       after_deploy:
-        - curl http://wspologarniacz.herokuapp.com/public/swagger-ui.html
+        - curl http://wspologarniacz.herokuapp.com/swagger-ui.html
 
