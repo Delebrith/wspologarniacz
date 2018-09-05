@@ -1,0 +1,58 @@
+language: java
+install: true
+
+jdk:
+  - oraclejdk8
+
+before_install:
+  - chmod +x gradlew
+
+jobs:
+  include:
+    - stage: build
+      script:
+        - ./gradlew assemble
+
+    - stage: test
+      script:
+        - ./gradlew check
+        - ./gradlew jacocoTestReport
+      after_success:
+        - curl -s https://codecov.io/bash | bash
+
+    - stage: deployment to staging
+      if: branch = develop
+      then:
+      env:
+        - secure: "WcWmVmh92ZLrsLr27k9o/d/17HXB0+2a3KZL7O6UpcERHZBmvX5uQPRkeub7cZsKyMwF5i/fnjDhyJSyf29rTBp27pD+wqSPNluWMH4ujwz7ibzvEgnQIouIfMld2u7j/7yyq2ahum0ZQH8EyJ2Lc/KY+k1xIxChWtKB6p6U01PjdMy231d1jmGHgASFEB8tIrdy8BP2+kg8L2XsaHRz2EFeeVLYQEGV+iX2V1QTXRkY+E8LUWrse3pMCfxqE4nE0Zvf+JkC8Rkfmp161Gs/Opr/PagJnmF0xfEdxecYFvBlVRID+g7vwiJG09R4ULh/Wb+pRPjm+C9BXj2ThxMtRJLiPye5HfXKiaPYvon5Qoj4FDn1tMIvqtNxG6npU+TueelZMGLaN1Fgi1qws6TH+ohFb85s3frdjg+PIGKyZGTU9zuc2hH0TcSMuPHf0qQvCiK/dYYeLTqCXRZeMs4giu72CkF/cLM74BBh+2NLQsfCILFO4ANgZExFhbr3EBI7G5sNrX7vX8xFMHeXFTY76wxY3wOpahAmWeiCG/Gxb47zzZJK/ofMcZSfoHPkmlp/SW+jgxPYA8CCMJHt5YsFB51lIgTN2GqziMm5PF3pEnLovOPJJFqHw6zYmB+hdauRspO+VQ0fmLs1dA8t5eA5CMvUyZMxX3fLnHAp4IvygwQ="
+        - secure: "qQPY7d3io7HX5FUH+Eu//+E0sbehBYO8ccVvppNMjo2qSzNsJafCyovukz7T0a1XxFpZ5I+VU1Ol1N74IJn6FwL4GfybnC6Te09zXcH2LjTAHEyMQA1dKKl9N8mxPeo+QFHUzjyDjLT0ZoJWp3vkArSM1W1NcJUO6uMCgUrgGsGJpdunBioHDV8bsGdrlOPbsbcI9U6uC5CRQL1E+Qn5ZKfEK2VFsD6mz66kC+7+IVb6bOld+jKSJap6XngPu0IFEmCVInoRmUlrhV9CQZnNgz4N2SaXqUxvtG9D+1o13p0tWgNgjOF6WqBKk/t9bazYRB/YDckasffbyziIP1hZhSC+SPI6pxlcdnWvM62Lk1TkZGHsnxUm5oRGkGfiUca58EXOV0t2oW0nFfYOI9d2JBdZ/eeIN1HjCCK6jPZKFrCwnKyDy1di3X8uUcVXf2i+ZYQdJveHEdUkvtNGYOYfYrn3so2kbTs6Pyf2y+6Lnqlk6Ts/aqb59MiladSXlZxLmQdgYb4JNJ8EGw9IGIILperdaJ/PBbJWUxPAvDEWmf8TOUPB9/CHfGPfuTiP+SNm94KIx9PQ7ZWbfr7yK5IJ8+I/ReghRECloN3PVk+nzyEBieq7MCmMNBKS+rHpHESbrLYwOEvUSwH+mJVtlms7I9E5nJVeZEIeSoaOg7nfoOY="
+      script:
+        - skip
+      deploy: &heroku
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: bbLw+fckOzxBFcGj87N9bfA7H8ZrwBnpxKBb1RHWQZ6vhGL1rbM7sDDNKnq3IY0R9rlW9l3MTeTQP6B3hX5DqVkyelhURiYSQehXUHu/A5auvzqqqOdDxUgbshLXHFPIE2UA809OItNyjVffc0/E7TlA7Qz0eQM38WJ4RPWdfUqoVPBSCNfNL+HS/MyoTD0d48lgcaYtapVFP9uG66euT+3uENvCXng5ivVr7BHofCOw1SGwtfxGd52or3XPYy1YjHSz5j5UtyvzQle9V1U+DdauhcqYaHJdz4aCFBtEFkWDOkRY89idGbMr5PJaOd2TCLj0z5JHvJrbSwY2vApvxwZhWCQ4xaLvsEHyNlcybo6w96uyuVq7bEydotyjjN8drqc2I74KCKllnmb1mgpdDf9CDDyQPbYqE/XKNH9VFhCWZyUA8lfR/BKviMMZ08BOmHyJGfPHIGIk7ws6bmXR+0agQp3WToUhVx9CjLW04eNjatqEFXJ9oH0bqHGGgiDuAnNKvvJcmW11iNuw8VrudmXoxm0d4/tsmidRQeBnf0beFV+Qfc56h5IKN8ES1o2h829Ave5xI/CPgG5JBKLOvB7RebeaKncXBhIVTqQ0lm4vW5Dy62zDWqYfd5Q8Xazz+ElgZ2IYcFIKZ6FHxgUgfGDOVcCoVLOz1BDKfK3NT18=
+        app:
+          develop: board-up-staging
+      after_deploy:
+        - curl http://board-up-staging.herokuapp.com/public/swagger-ui.html
+
+    - stage: deployment to production
+      if: branch = master
+      then:
+      env:
+        - secure: "WcWmVmh92ZLrsLr27k9o/d/17HXB0+2a3KZL7O6UpcERHZBmvX5uQPRkeub7cZsKyMwF5i/fnjDhyJSyf29rTBp27pD+wqSPNluWMH4ujwz7ibzvEgnQIouIfMld2u7j/7yyq2ahum0ZQH8EyJ2Lc/KY+k1xIxChWtKB6p6U01PjdMy231d1jmGHgASFEB8tIrdy8BP2+kg8L2XsaHRz2EFeeVLYQEGV+iX2V1QTXRkY+E8LUWrse3pMCfxqE4nE0Zvf+JkC8Rkfmp161Gs/Opr/PagJnmF0xfEdxecYFvBlVRID+g7vwiJG09R4ULh/Wb+pRPjm+C9BXj2ThxMtRJLiPye5HfXKiaPYvon5Qoj4FDn1tMIvqtNxG6npU+TueelZMGLaN1Fgi1qws6TH+ohFb85s3frdjg+PIGKyZGTU9zuc2hH0TcSMuPHf0qQvCiK/dYYeLTqCXRZeMs4giu72CkF/cLM74BBh+2NLQsfCILFO4ANgZExFhbr3EBI7G5sNrX7vX8xFMHeXFTY76wxY3wOpahAmWeiCG/Gxb47zzZJK/ofMcZSfoHPkmlp/SW+jgxPYA8CCMJHt5YsFB51lIgTN2GqziMm5PF3pEnLovOPJJFqHw6zYmB+hdauRspO+VQ0fmLs1dA8t5eA5CMvUyZMxX3fLnHAp4IvygwQ="
+        - secure: "qQPY7d3io7HX5FUH+Eu//+E0sbehBYO8ccVvppNMjo2qSzNsJafCyovukz7T0a1XxFpZ5I+VU1Ol1N74IJn6FwL4GfybnC6Te09zXcH2LjTAHEyMQA1dKKl9N8mxPeo+QFHUzjyDjLT0ZoJWp3vkArSM1W1NcJUO6uMCgUrgGsGJpdunBioHDV8bsGdrlOPbsbcI9U6uC5CRQL1E+Qn5ZKfEK2VFsD6mz66kC+7+IVb6bOld+jKSJap6XngPu0IFEmCVInoRmUlrhV9CQZnNgz4N2SaXqUxvtG9D+1o13p0tWgNgjOF6WqBKk/t9bazYRB/YDckasffbyziIP1hZhSC+SPI6pxlcdnWvM62Lk1TkZGHsnxUm5oRGkGfiUca58EXOV0t2oW0nFfYOI9d2JBdZ/eeIN1HjCCK6jPZKFrCwnKyDy1di3X8uUcVXf2i+ZYQdJveHEdUkvtNGYOYfYrn3so2kbTs6Pyf2y+6Lnqlk6Ts/aqb59MiladSXlZxLmQdgYb4JNJ8EGw9IGIILperdaJ/PBbJWUxPAvDEWmf8TOUPB9/CHfGPfuTiP+SNm94KIx9PQ7ZWbfr7yK5IJ8+I/ReghRECloN3PVk+nzyEBieq7MCmMNBKS+rHpHESbrLYwOEvUSwH+mJVtlms7I9E5nJVeZEIeSoaOg7nfoOY="
+      script:
+        - skip
+      deploy: &heroku
+        provider: heroku
+        skip_cleanup: true
+        api_key:
+          secure: bbLw+fckOzxBFcGj87N9bfA7H8ZrwBnpxKBb1RHWQZ6vhGL1rbM7sDDNKnq3IY0R9rlW9l3MTeTQP6B3hX5DqVkyelhURiYSQehXUHu/A5auvzqqqOdDxUgbshLXHFPIE2UA809OItNyjVffc0/E7TlA7Qz0eQM38WJ4RPWdfUqoVPBSCNfNL+HS/MyoTD0d48lgcaYtapVFP9uG66euT+3uENvCXng5ivVr7BHofCOw1SGwtfxGd52or3XPYy1YjHSz5j5UtyvzQle9V1U+DdauhcqYaHJdz4aCFBtEFkWDOkRY89idGbMr5PJaOd2TCLj0z5JHvJrbSwY2vApvxwZhWCQ4xaLvsEHyNlcybo6w96uyuVq7bEydotyjjN8drqc2I74KCKllnmb1mgpdDf9CDDyQPbYqE/XKNH9VFhCWZyUA8lfR/BKviMMZ08BOmHyJGfPHIGIk7ws6bmXR+0agQp3WToUhVx9CjLW04eNjatqEFXJ9oH0bqHGGgiDuAnNKvvJcmW11iNuw8VrudmXoxm0d4/tsmidRQeBnf0beFV+Qfc56h5IKN8ES1o2h829Ave5xI/CPgG5JBKLOvB7RebeaKncXBhIVTqQ0lm4vW5Dy62zDWqYfd5Q8Xazz+ElgZ2IYcFIKZ6FHxgUgfGDOVcCoVLOz1BDKfK3NT18=
+        app:
+          master: board-up
+      after_deploy:
+        - curl http://board-up.herokuapp.com/public/swagger-ui.html
+

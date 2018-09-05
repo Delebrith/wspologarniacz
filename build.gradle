@@ -10,8 +10,15 @@ buildscript {
 	}
 }
 
+plugins {
+	id 'net.ltgt.apt' version '0.10'
+	id 'org.hidetake.swagger.generator' version '2.12.0'
+	id 'io.spring.dependency-management' version '1.0.6.RELEASE'
+}
+
 apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: 'groovy'
+apply plugin: 'jacoco'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -25,6 +32,66 @@ repositories {
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter')
+	swaggerCodegen('io.swagger:swagger-codegen-cli:2.3.1')
+	runtime('org.webjars:swagger-ui:3.17.6')
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+
+	compile('org.springframework.boot:spring-boot-starter-web')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	testCompile('org.springframework.security:spring-security-test')
+
+	runtime('com.h2database:h2')
+	runtime('org.postgresql:postgresql')
+	compile("org.liquibase:liquibase-core")
+
+	compileOnly 'org.projectlombok:lombok:1.18.2'
+	apt "org.projectlombok:lombok:1.18.2"
+
+	compile('io.jsonwebtoken:jjwt:0.7.0')
+
+	testCompile('junit:junit:4.12')
+	testCompile('org.codehaus.groovy:groovy-all:2.4.4')
+	testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
+	testCompile('org.spockframework:spock-spring:1.1-groovy-2.4')
+
+	testRuntime('com.athaydes:spock-reports:1.6.0')
+
+	compile('org.mapstruct:mapstruct-jdk8:1.2.0.Final')
+	apt('org.mapstruct:mapstruct-processor:1.2.0.Final')
+
+	compile('org.springframework.boot:spring-boot-starter-freemarker')
+	compile('org.springframework.boot:spring-boot-starter-mail')
 }
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
+}
+
+swaggerSources {
+	api {
+		inputFile = file('src/main/resources/static/public/schema/swagger.json')
+		code {
+			outputDir = file("$buildDir/generated/source/swagger/")
+			language = 'spring'
+			dependsOn validation
+			components = [models: true, apis: true]
+			additionalProperties = [
+					'sourceFolder'   : '/',
+					'apiPackage'     : 'com.purplepanda.wspologarniacz.api',
+					'modelPackage'   : 'com.purplepanda.wspologarniacz.api.model',
+					'modelNameSuffix': 'Dto',
+					'java8'          : 'true',
+					'dateLibrary'    : 'java8',
+					'delegatePattern': 'true',
+					'useTags'        : 'true'
+			]
+		}
+	}
+}
+compileJava.dependsOn swaggerSources.api.code
+sourceSets.main.java.srcDir "${swaggerSources.api.code.outputDir}"

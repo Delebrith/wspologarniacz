@@ -1,0 +1,73 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet author="liquidbase" id="001">
+        <createTable tableName="user">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="email" type="varchar(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
+            <column name="active" type="BOOLEAN">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="user" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <loadData encoding="UTF-8"
+                  file="db/data/user.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="user">
+        </loadData>
+
+        <createTable tableName="user_authorities">
+            <column name="user_id" type="BIGINT">
+            </column>
+            <column name="authority_name" type="varchar(50)">
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="user_authorities"
+                                 baseColumnNames="user_id" constraintName="user_fk"
+                                 referencedTableName="user" referencedColumnNames="id" />
+        <loadData encoding="UTF-8"
+                  file="db/data/user_authorities.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="user_authorities">
+        </loadData>
+
+        <createTable tableName="request_token">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="token" type="varchar(128)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="requester" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+            <column name="expires_at" type="DATE">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="request_token" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <addForeignKeyConstraint baseTableName="request_token"
+                                 baseColumnNames="requester" constraintName="requester_fk"
+                                 referencedTableName="user" referencedColumnNames="id" />
+    </changeSet>
+
+</databaseChangeLog>
