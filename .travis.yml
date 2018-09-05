@@ -34,7 +34,7 @@ jobs:
         api_key:
           secure: "Q9zEw8ihUhMQmrpilYsT9y8Zpfgaz4ou04XF/RW8UnEcLBop5xX+MSHXtZV3wxluesWK1Y0e4CbzGJe/nqE1naWkXGvmIFWWe61AvKkfE5WqmNwkHvRANxDumFq4xOk2g0JyZTx7+euVYfQ9kD4H4Y1VsY8RBgy1AsGaPdest0o7JafIzXp/kzBGv8Vpno9tUycsyrpjYYmdqi0p3FKqnhA1E9c3uUQhd6Obauvw6pcU5RgiNY+XZTbrXFwzkPz7qLdTHOQO/qmtO1+/WReg/4Pmag+LJThoLZVwmq7p/K8R/Jq9sz9Weiqezh8K6BKqElPwuclrdy8+hSO4ypkWP/Jeaa+bh9SQcUWOPPTamirFmzLiRjK0We4CTe1tlibOtybDmQO05RcPrrahzrmnxEv23lvpnlJWw78fUVJbgdhoRkqMBIIxonxFWxMqEroxwTHen8HoO3KSQ4XPUTvmhRt3MkoFsxn9JWBieKuYq9hTvf34SIir75EF1k/60HxC0RQK8BzSM5cmBmCd/USO9SXFkO9GBkZcArDsDsiT5DPTMut+UgB/h/ha/Qi1fbG8+Ln8tSPNHxpiKWfgC5V9TyZkJPahZ8viB7ykCUlS/DzomVIstjMe0rcO0ryFjUVYb2zVxpCFwkgQcgcHtJCbkURdiL8dAf60vdvqXMrjgFU="
         app:
-          develop: board-up-staging
+          develop: wspologarniacz-staging
       after_deploy:
         - curl http://wspologarniacz-staging.herokuapp.com/public/swagger-ui.html
 
@@ -52,7 +52,7 @@ jobs:
         api_key:
           secure: "Q9zEw8ihUhMQmrpilYsT9y8Zpfgaz4ou04XF/RW8UnEcLBop5xX+MSHXtZV3wxluesWK1Y0e4CbzGJe/nqE1naWkXGvmIFWWe61AvKkfE5WqmNwkHvRANxDumFq4xOk2g0JyZTx7+euVYfQ9kD4H4Y1VsY8RBgy1AsGaPdest0o7JafIzXp/kzBGv8Vpno9tUycsyrpjYYmdqi0p3FKqnhA1E9c3uUQhd6Obauvw6pcU5RgiNY+XZTbrXFwzkPz7qLdTHOQO/qmtO1+/WReg/4Pmag+LJThoLZVwmq7p/K8R/Jq9sz9Weiqezh8K6BKqElPwuclrdy8+hSO4ypkWP/Jeaa+bh9SQcUWOPPTamirFmzLiRjK0We4CTe1tlibOtybDmQO05RcPrrahzrmnxEv23lvpnlJWw78fUVJbgdhoRkqMBIIxonxFWxMqEroxwTHen8HoO3KSQ4XPUTvmhRt3MkoFsxn9JWBieKuYq9hTvf34SIir75EF1k/60HxC0RQK8BzSM5cmBmCd/USO9SXFkO9GBkZcArDsDsiT5DPTMut+UgB/h/ha/Qi1fbG8+Ln8tSPNHxpiKWfgC5V9TyZkJPahZ8viB7ykCUlS/DzomVIstjMe0rcO0ryFjUVYb2zVxpCFwkgQcgcHtJCbkURdiL8dAf60vdvqXMrjgFU="
         app:
-          master: board-up
+          master: wspologarniacz
       after_deploy:
         - curl http://wspologarniacz.herokuapp.com/public/swagger-ui.html
 
