@@ -17,7 +17,7 @@
                     <form class="form" role="form" autocomplete="off" id="formLogin" method="POST">
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="text" class="form-control form-control-lg rounded-0" ng-model="email">
+                            <input type="text" class="form-control form-control-lg rounded-0" ng-model="email" required>
                             <div class="invalid-feedback">Wprowadź email!</div>
                         </div>
                         <div class="form-group mb-4">
@@ -25,7 +25,7 @@
                             <input type="password" class="form-control form-control-lg rounded-0" ng-model="password">
                             <div class="invalid-feedback">Wprowadź hasło!</div>
                         </div>
-                        <button class="btn btn-lg my-2 my-sm-0 float-right btn-primary" id="btnLogin" ng-click = "submit()">
+                        <button class="btn btn-lg my-2 my-sm-0 float-right btn-primary" id="btnLogin" ng-click = "login()">
                             Zaloguj się
                         </button>
                     </form>

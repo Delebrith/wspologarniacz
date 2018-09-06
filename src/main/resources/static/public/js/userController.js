@@ -1,4 +1,5 @@
 app.controller('userController', function($scope, $http, $cookies, $window) {
+
 	function invalidEmail()
 	{
 		alert('Niepoprawny adres email!');
@@ -15,7 +16,7 @@ app.controller('userController', function($scope, $http, $cookies, $window) {
 		$window.location.reload()
 	}
 
-	$scope.submit = function()	{
+	$scope.login = function()	{
 		var userCredentialsDto = {
 			email: $scope.email,
 			password: $scope.password
@@ -38,6 +39,46 @@ app.controller('userController', function($scope, $http, $cookies, $window) {
 
 	$scope.logout = function() {
 		$cookies.remove('token');
-		$window.location.href = "/#";
+		$window.location.href = "/";
+		$window.reload();
 	}
+
+	$scope.requestPasswordReset = function() {
+	    if ($scope.email == undefined) {
+            invalidEmail();
+            return;
+        }
+
+        var userCredentialsDto = {
+            email: $scope.email
+        };
+
+        var response = $http.post("/user/password/reset/request", userCredentialsDto);
+        response.then(
+            function(response) {
+                alert(response);
+            },
+            function(response){
+                alert(response);
+            });
+	}
+
+    $scope.passwordResetConfirm = function() {
+        var token = $scope.params['token']
+
+        var passwordDto = {
+            password: $scope.password
+        };
+
+        var response = $http.post("/user/password/reset/confirm/" + token, passwordDto);
+        response.then(
+            function(response) {
+                $scope.successMessage = "Hasło zostało zmienione!"
+                $scope.navigate("/#success")
+                $window.location.reload();
+            },
+            function(response){
+                alert("porażka");
+            });
+    }
 });

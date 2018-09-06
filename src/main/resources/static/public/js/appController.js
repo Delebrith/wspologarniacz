@@ -12,6 +12,11 @@ app.config(function($httpProvider, $routeProvider) {
 });
 
 app.controller("appController", function($scope, $http, $cookies, $location, $window) {
+
+
+    $scope.successMessage = ""
+    $scope.failureMessage = ""
+
 	$scope.context = {
 			user: null
 	}
@@ -22,7 +27,11 @@ app.controller("appController", function($scope, $http, $cookies, $location, $wi
 
 	$scope.pages = {
 			logout: "logout",
+			register: "register",
 			confirmRegistration: "confirm-registration",
+			passwordReset: "password-reset",
+			success: "success",
+			error: "error",
 	}
 
 	$scope.isPage = function (page) {

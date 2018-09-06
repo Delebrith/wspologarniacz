@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
 
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand ml-2" href="#">
         <b>
             <i class="fas fa-clipboard-check"></i> Współogarniacz
         </b>
@@ -28,7 +28,10 @@
                 </div>
             </li>
 
+
         </ul>
-        <ng-include ng-if="isLogged()" src="'logoutPanel.html'"></ng-include>
+
+        <ng-include ng-if="isLogged()" src="'public/logoutButton.html'"></ng-include>
+
     </div>
 </nav>

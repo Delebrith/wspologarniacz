@@ -23,9 +23,13 @@
 
     <div class="container col-md-12">
 
-        <!--<ng-include ng-if="!isLogged()" src="'public/passwordResetPanel.html'"></ng-include>-->
+        <ng-include ng-if="!isLogged() && !isAnyPage()" src="'public/loginPanel.html'"></ng-include>
 
-        <ng-include ng-if="!isLogged()" src="'public/loginPanel.html'"></ng-include>
+        <ng-include ng-if="isPage(pages.register)" src="'public/registrationPanel.html'"></ng-include>
+
+        <ng-include ng-if="isPage(pages.passwordReset)" src="'public/passwordResetPanel.html'"></ng-include>
+
+        <ng-include ng-if="isPage(pages.success)" src="'public/passwordResetPanel.html'"></ng-include>
 
     </div>
 
