@@ -5,7 +5,7 @@
 
 
     <changeSet author="liquidbase" id="001">
-        <createTable tableName="user">
+        <createTable tableName="user_">
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false" />
             </column>
@@ -22,7 +22,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addAutoIncrement tableName="user" columnName="id"
+        <addAutoIncrement tableName="user_" columnName="id"
                           columnDataType="BIGINT" startWith="10" incrementBy="1"/>
         <loadData encoding="UTF-8"
                   file="db/data/user.csv"
@@ -40,7 +40,7 @@
         </createTable>
         <addForeignKeyConstraint baseTableName="user_authorities"
                                  baseColumnNames="user_id" constraintName="user_fk"
-                                 referencedTableName="user" referencedColumnNames="id" />
+                                 referencedTableName="user_" referencedColumnNames="id" />
         <loadData encoding="UTF-8"
                   file="db/data/user_authorities.csv"
                   quotchar="'"
@@ -67,7 +67,7 @@
                           columnDataType="BIGINT" startWith="10" incrementBy="1"/>
         <addForeignKeyConstraint baseTableName="request_token"
                                  baseColumnNames="requester_id" constraintName="requester_fk"
-                                 referencedTableName="user" referencedColumnNames="id" />
+                                 referencedTableName="user_" referencedColumnNames="id" />
     </changeSet>
 
 </databaseChangeLog>
