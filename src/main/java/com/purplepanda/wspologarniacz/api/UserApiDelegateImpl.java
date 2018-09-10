@@ -1,9 +1,6 @@
 package com.purplepanda.wspologarniacz.api;
 
-import com.purplepanda.wspologarniacz.api.model.AuthorizationTokenDto;
-import com.purplepanda.wspologarniacz.api.model.PasswordDto;
-import com.purplepanda.wspologarniacz.api.model.UserCredentialsDto;
-import com.purplepanda.wspologarniacz.api.model.UserDto;
+import com.purplepanda.wspologarniacz.api.model.*;
 import com.purplepanda.wspologarniacz.user.User;
 import com.purplepanda.wspologarniacz.user.UserMapper;
 import com.purplepanda.wspologarniacz.user.UserService;
@@ -29,6 +26,8 @@ public class UserApiDelegateImpl implements UserApiDelegate {
 
     @Override
     public ResponseEntity<AuthorizationTokenDto> login(UserCredentialsDto credentials) {
+        if (credentials.getPassword() == null || credentials.getPassword().isEmpty())
+            throw new UserNotFoundException();
         User authorized =  userService.authenticate(credentials.getEmail(), credentials.getPassword())
                 .orElseThrow(UserNotFoundException::new);
         return ResponseEntity.ok(new AuthorizationTokenDto().token(userService.getUsersToken(authorized)));

@@ -29,7 +29,7 @@
                   quotchar="'"
                   schemaName="public"
                   separator=","
-                  tableName="user">
+                  tableName="user_">
         </loadData>
 
         <createTable tableName="user_authorities">

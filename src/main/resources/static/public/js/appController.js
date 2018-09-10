@@ -17,6 +17,8 @@ app.controller("appController", function($scope, $http, $cookies, $location, $wi
     $scope.successMessage = ""
     $scope.failureMessage = ""
 
+    $scope.currentMessage = ""
+
 	$scope.context = {
 			user: null
 	}

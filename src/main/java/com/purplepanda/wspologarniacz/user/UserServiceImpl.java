@@ -2,7 +2,7 @@ package com.purplepanda.wspologarniacz.user;
 
 import com.purplepanda.wspologarniacz.user.event.PasswordResetRequestEvent;
 import com.purplepanda.wspologarniacz.user.event.UserCreatedEvent;
-import com.purplepanda.wspologarniacz.user.exception.IncorrectToken;
+import com.purplepanda.wspologarniacz.user.exception.IncorrectTokenException;
 import com.purplepanda.wspologarniacz.user.exception.RequestNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException;
 import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
@@ -138,7 +138,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
         RequestToken requestToken = requestTokenRepository.findByToken(token).orElseThrow(RequestNotFoundException::new);
 
         if (LocalDateTime.now().isAfter(requestToken.getExpiresAt())){
-            throw new IncorrectToken();
+            throw new IncorrectTokenException();
         }
 
         User user  = requestToken.getRequester();
