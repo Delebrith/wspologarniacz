@@ -11,7 +11,10 @@ app.controller('userController', function($scope, $http, $cookies, $window) {
 	}
 
 	function failedLogin(response)	{
-        if (reponse.status ) $scope.currentMessage = "Błąd logowania"
+        if (response.status == 404 )
+            $scope.currentMessage = "Nieprawidłowy adres email lub hasło."
+        else
+            $scope.currentMessage = "Błąd logowania."
         $('#infoModal').modal('show')
 	}
 
@@ -79,8 +82,7 @@ app.controller('userController', function($scope, $http, $cookies, $window) {
         var response = $http.post("/user/password/reset/confirm/" + token, passwordDto);
         response.then(
             function(response) {
-                $scope.successMessage = "Hasło zostało zmienione!"
-                $window.location.href("/#success")
+                $window.location.href = "/#success"
             },
             function(response){
                 $scope.currentMessage = "Wystąpił błąd. Nie udało się zresetować hasła. Spróbuj ponownie lub skontaktuj się z administracją."
