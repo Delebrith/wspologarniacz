@@ -1,0 +1,40 @@
+body {
+    font-family: 'Quicksand', sans-serif;
+}
+
+.navbar {
+    background-color: #7766DD99
+}
+
+.btn-primary {
+    font-weight: 500;
+    background-color: white;
+    color: #145CFFC2;
+    border-color: #145CFFC2;
+}
+
+.btn-primary:hover {
+    font-weight: 500;
+    background-color: #145CFFC2;
+    color: white;
+    border-color: #145CFFC2;
+}
+
+.navbar .btn-info {
+    font-weight: 500;
+    background-color: #7766DD00;
+    color: white;
+    border-color: #7766DD00;
+}
+
+
+.navbar .btn-info:hover {
+    font-weight: 500;
+    background-color: #7766DD22;
+    color: white;
+    border-color: #7766DD22;
+}
+
+a {
+    color: #44ABDD;
+}

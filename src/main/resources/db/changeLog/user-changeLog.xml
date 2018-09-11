@@ -5,7 +5,7 @@
 
 
     <changeSet author="liquidbase" id="001">
-        <createTable tableName="user">
+        <createTable tableName="user_">
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false" />
             </column>
@@ -22,14 +22,14 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addAutoIncrement tableName="user" columnName="id"
+        <addAutoIncrement tableName="user_" columnName="id"
                           columnDataType="BIGINT" startWith="10" incrementBy="1"/>
         <loadData encoding="UTF-8"
                   file="db/data/user.csv"
                   quotchar="'"
                   schemaName="public"
                   separator=","
-                  tableName="user">
+                  tableName="user_">
         </loadData>
 
         <createTable tableName="user_authorities">
@@ -40,7 +40,7 @@
         </createTable>
         <addForeignKeyConstraint baseTableName="user_authorities"
                                  baseColumnNames="user_id" constraintName="user_fk"
-                                 referencedTableName="user" referencedColumnNames="id" />
+                                 referencedTableName="user_" referencedColumnNames="id" />
         <loadData encoding="UTF-8"
                   file="db/data/user_authorities.csv"
                   quotchar="'"
@@ -56,18 +56,18 @@
             <column name="token" type="varchar(128)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="requester" type="BIGINT">
+            <column name="requester_id" type="BIGINT">
                 <constraints nullable="false" />
             </column>
-            <column name="expires_at" type="DATE">
+            <column name="expires_at" type="TIMESTAMP">
                 <constraints nullable="false" />
             </column>
         </createTable>
         <addAutoIncrement tableName="request_token" columnName="id"
                           columnDataType="BIGINT" startWith="10" incrementBy="1"/>
         <addForeignKeyConstraint baseTableName="request_token"
-                                 baseColumnNames="requester" constraintName="requester_fk"
-                                 referencedTableName="user" referencedColumnNames="id" />
+                                 baseColumnNames="requester_id" constraintName="requester_fk"
+                                 referencedTableName="user_" referencedColumnNames="id" />
     </changeSet>
 
 </databaseChangeLog>

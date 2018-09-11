@@ -1,6 +1,8 @@
 package com.purplepanda.wspologarniacz.base.config.web;
 
 import com.purplepanda.wspologarniacz.api.model.ErrorDto;
+import com.purplepanda.wspologarniacz.user.exception.IncorrectTokenException;
+import com.purplepanda.wspologarniacz.user.exception.RequestNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException;
 import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DefaultExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({UserNotFoundException.class, UsernameNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, UsernameNotFoundException.class, RequestNotFoundException.class})
     @ResponseBody
     ErrorDto handleResourceNotFound(final HttpServletRequest req, final Exception ex) {
         return new ErrorDto()
@@ -26,7 +28,7 @@ public class DefaultExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({IllegalStateException.class})
+    @ExceptionHandler({IllegalStateException.class, IncorrectTokenException.class})
     @ResponseBody
     ErrorDto handleBadRequest(final HttpServletRequest req, final Exception ex) {
         return new ErrorDto()

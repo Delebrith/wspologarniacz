@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
 
+    <link href="https://fonts.googleapis.com/css?family=Montserrat+Alternates|Quicksand:300,400,500,700&amp;subset=latin-ext" rel="stylesheet">
+
     <link rel="stylesheet" href="public/style/style.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
@@ -21,7 +23,15 @@
 
     <div class="container col-md-12">
 
-        <ng-include ng-if="!isLogged()" src="'public/loginPanel.html'"></ng-include>
+        <ng-include ng-if="!isLogged() && !isAnyPage()" src="'public/loginPanel.html'"></ng-include>
+
+        <ng-include ng-if="isPage(pages.register)" src="'public/registrationPanel.html'"></ng-include>
+
+        <ng-include ng-if="isPage(pages.confirmRegistration)" src="'public/confirmRegistrationPanel.html'"></ng-include>
+
+        <ng-include ng-if="isPage(pages.passwordReset)" src="'public/passwordResetPanel.html'"></ng-include>
+
+        <ng-include ng-if="isPage(pages.success)" src="'public/successPanel.html'"></ng-include>
 
     </div>
 

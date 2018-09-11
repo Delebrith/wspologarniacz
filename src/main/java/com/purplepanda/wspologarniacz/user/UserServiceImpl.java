@@ -2,7 +2,7 @@ package com.purplepanda.wspologarniacz.user;
 
 import com.purplepanda.wspologarniacz.user.event.PasswordResetRequestEvent;
 import com.purplepanda.wspologarniacz.user.event.UserCreatedEvent;
-import com.purplepanda.wspologarniacz.user.exception.IncorrectToken;
+import com.purplepanda.wspologarniacz.user.exception.IncorrectTokenException;
 import com.purplepanda.wspologarniacz.user.exception.RequestNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException;
 import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 class UserServiceImpl implements UserService, UserDetailsService {
@@ -95,7 +96,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
 
         eventPublisher.publishEvent(UserCreatedEvent.builder()
                 .user(created)
-                .confirmationUrl(serverUrl + "/#confirm-registration?id=" + created.getId())
+                .confirmationUrl(serverUrl + "/?userId=" + created.getId() + "/#confirm-registration")
                 .build());
 
         return created;
@@ -116,12 +117,13 @@ class UserServiceImpl implements UserService, UserDetailsService {
     public void requestPasswordReset(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         RequestToken resetRequestToken = RequestToken.builder()
+                .token(UUID.randomUUID().toString())
                 .requester(user)
-                .expiresAt(LocalDateTime.now().plusMinutes(2))
+                .expiresAt(LocalDateTime.now().plusMinutes(5L))
                 .build();
         resetRequestToken = requestTokenRepository.save(resetRequestToken);
         eventPublisher.publishEvent(new PasswordResetRequestEvent(user,
-                serverUrl + "/#password-reset?token=" + resetRequestToken.getId()));
+                serverUrl + "/?token=" + resetRequestToken.getToken() + "/#password-reset"));
     }
 
     @Override
@@ -136,12 +138,11 @@ class UserServiceImpl implements UserService, UserDetailsService {
         RequestToken requestToken = requestTokenRepository.findByToken(token).orElseThrow(RequestNotFoundException::new);
 
         if (LocalDateTime.now().isAfter(requestToken.getExpiresAt())){
-            throw new IncorrectToken();
+            throw new IncorrectTokenException();
         }
 
         User user  = requestToken.getRequester();
-        user.setPassword(password);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(password));
         userRepository.save(user);
         requestTokenRepository.delete(requestToken);
     }

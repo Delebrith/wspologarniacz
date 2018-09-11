@@ -64,6 +64,8 @@ dependencies {
 
 	compile('org.springframework.boot:spring-boot-starter-freemarker')
 	compile('org.springframework.boot:spring-boot-starter-mail')
+
+	compile('org.zalando:logbook-spring-boot-starter:1.8.0')
 }
 
 jacocoTestReport {
