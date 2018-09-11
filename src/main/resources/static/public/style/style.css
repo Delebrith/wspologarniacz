@@ -21,15 +21,14 @@ body {
 }
 
 .navbar .btn-info {
-    font-weight: 500;
+    font-weight: 400;
     background-color: #7766DD00;
     color: white;
     border-color: #7766DD00;
 }
 
-
 .navbar .btn-info:hover {
-    font-weight: 500;
+    font-weight: 400;
     background-color: #7766DD22;
     color: white;
     border-color: #7766DD22;

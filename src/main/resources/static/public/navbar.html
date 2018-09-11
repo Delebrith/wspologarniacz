@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
 
-    <a class="navbar-brand ml-2" href="#">
+    <a class="navbar-brand ml-2 mr-4 pl-2 pr-2" href="#">
         <b>
-            <i class="fas fa-clipboard-check"></i> Współogarniacz
+            <i class="fas fa-home"></i> Współogarniacz
         </b>
     </a>
 
@@ -13,10 +13,16 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
 
-            <li class="nav-item active">
-                <a class="nav-link" href="/#">Strona główna<span class="sr-only">(current)</span></a>
+            <li class="nav-item dropdown active" ng-if="isLogged()">
+                <button type="button" class="btn btn-info my-2 my-sm-0 dropdown-toggle" id="accountNavbarDropdown" role="button" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-cog"></i> Konto
+                </button>
+                <div class="dropdown-menu" aria-labelledby="accountNavbarDropdown" ng-controller="userController">
+                    <a class="dropdown-item" href="/#password-change">Zmień hasło</a>
+                    <a class="dropdown-item" ng-click="deregister()">Usuń konto</a>
+                </div>
             </li>
-
 
             <li class="nav-item dropdown" ng-if="isUserAdministrator()">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
