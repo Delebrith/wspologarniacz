@@ -114,6 +114,25 @@ app.controller('userController', function($scope, $http, $cookies, $window) {
             });
     }
 
+
+    $scope.changePassword = function() {
+
+        var passwordDto = {
+            password: $scope.password
+        };
+
+        var response = $http.post("/user/password/change", passwordDto);
+        response.then(
+            function(response) {
+                $window.location.href = "/#success"
+            },
+            function(response){
+                $scope.currentMessage = "Wystąpił błąd. Nie udało się zresetować hasła. Spróbuj ponownie lub skontaktuj się z administracją."
+                $('#infoModal').modal('show')
+            });
+    }
+
+
     function registerConfirm() {
         var id = $scope.params['userId']
 
@@ -126,4 +145,24 @@ app.controller('userController', function($scope, $http, $cookies, $window) {
                 $scope.confirmationMessage = "Wystąpił błąd w czasie aktywacji konta."
             });
     }
+
+
+    $scope.deregister = function() {
+
+        var response = $http.delete("/user/deregister");
+        response.then(
+            function(response) {
+                $scope.currentMessage = "Twoje konto zostało usunięte."
+                $('#infoModal').modal('show')
+                $cookies.remove('token')
+                $window.location.href = "/";
+                $window.reload();
+            },
+            function(response){
+                $scope.currentMessage = "Wystąpił błąd. Nie udało się zresetować hasła. Spróbuj ponownie lub skontaktuj się z administracją."
+                $('#infoModal').modal('show')
+            });
+    }
+
+
 });

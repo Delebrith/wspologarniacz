@@ -32,6 +32,7 @@ app.controller("appController", function($scope, $http, $cookies, $location, $wi
 			register: "register",
 			confirmRegistration: "confirm-registration",
 			passwordReset: "password-reset",
+			passwordChange: "password-change",
 			success: "success",
 			error: "error",
 	}
@@ -108,5 +109,6 @@ app.controller("appController", function($scope, $http, $cookies, $location, $wi
 
 		}
 	}
+
 
 });
