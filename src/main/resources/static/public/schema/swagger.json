@@ -13,6 +13,10 @@
     {
       "name": "user",
       "description": "All account-related operations"
+    },
+    {
+      "name": "group",
+      "description": "Group-related operations"
     }
   ],
   "securityDefinitions": {
@@ -293,6 +297,35 @@
           }
         }
       }
+    },
+    "/group/my":{
+      "get": {
+        "operationId": "getMyGroups",
+        "tags": [
+          "group"
+        ],
+        "summary": "Request my groups info",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "If info is found",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -408,6 +441,52 @@
       "example": {
         "password": "myNewPassword"
       }
+    },
+    "Group": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "affiliations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Affiliation"
+          }
+        }
+      },
+      "required": [
+        "name", "affiliations"
+      ],
+      "example": {
+        "id": 1234,
+        "name": "My Group",
+        "affiliations": []
+      }
+    },
+    "AffiliationType": {
+      "type": "string",
+      "enum": [
+        "ACCEPTED", "PENDING_INVITATION", "WAITING_FOR_ACCEPTANCE"
+      ]
+    },
+    "Affiliation": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/User"
+        },
+        "state": {
+          "$ref": "#/definitions/AffiliationType"
+        }
+      },
+      "required": [
+        "user", "state"
+      ]
     }
   }
 }
