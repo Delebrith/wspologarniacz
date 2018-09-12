@@ -1,0 +1,59 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet author="liquidbase" id="001">
+        <createTable tableName="group_">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="group_" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <loadData encoding="UTF-8"
+                  file="db/data/group.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="group_">
+        </loadData>
+
+        <createTable tableName="affiliation">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="BIGINT">
+            </column>
+            <column name="group_id" type="BIGINT">
+            </column>
+            <column name="state" type="varchar(50)">
+            </column>
+            <column name="last_updated" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="affiliation" columnNames="user_id, group_id"/>
+        <addForeignKeyConstraint baseTableName="affiliation"
+                                 baseColumnNames="user_id" constraintName="user_affiliation_fk"
+                                 referencedTableName="user_" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="affiliation"
+                                 baseColumnNames="group_id" constraintName="group_affiliation_fk"
+                                 referencedTableName="group_" referencedColumnNames="id" />
+        <addAutoIncrement tableName="affiliation" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <loadData encoding="UTF-8"
+                  file="db/data/affiliation.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="affiliation">
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>

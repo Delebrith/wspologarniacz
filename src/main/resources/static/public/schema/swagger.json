@@ -27,6 +27,91 @@
     }
   },
   "paths": {
+    "/user/me":{
+      "get": {
+        "operationId": "getMyDetails",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request logged-in user details",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "If user was found",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/user/search/{size}/{number}":{
+      "get": {
+        "operationId": "searchUsers",
+        "tags": [
+          "user"
+        ],
+        "summary": "Search for users which names contain given string",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "Part of the searched user's name"
+          },
+          {
+            "name": "size",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "description": "Size of page of users"
+          },
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of page of users"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If invitation is accepted",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
     "/user/login":{
       "post": {
         "operationId": "login",
@@ -99,7 +184,7 @@
       }
     },
     "/user/register/{userId}/confirm":{
-      "get": {
+      "post": {
         "operationId": "confirm",
         "tags": [
           "user"
@@ -124,6 +209,32 @@
           },
           "400": {
             "description": "If invalid data was provided"
+          }
+        }
+      }
+    },
+    "/user/deregister":{
+      "delete": {
+        "operationId": "deregister",
+        "tags": [
+          "user"
+        ],
+        "summary": "Request deregistration",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "If deregistration was completed"
+          },
+          "400": {
+            "description": "If error occurs"
           }
         }
       }
@@ -243,61 +354,6 @@
         }
       }
     },
-    "/user/me":{
-      "get": {
-        "operationId": "getMyDetails",
-        "tags": [
-          "user"
-        ],
-        "summary": "Request logged-in user details",
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "If user was found",
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
-          },
-          "400": {
-            "description": "If error occurs"
-          }
-        }
-      }
-    },
-    "/user/deregister":{
-      "delete": {
-        "operationId": "deregister",
-        "tags": [
-          "user"
-        ],
-        "summary": "Request deregistration",
-        "security": [
-          {
-            "JWT": []
-          }
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": "If deregistration was completed"
-          },
-          "400": {
-            "description": "If error occurs"
-          }
-        }
-      }
-    },
     "/group/my":{
       "get": {
         "operationId": "getMyGroups",
@@ -318,8 +374,378 @@
           "200": {
             "description": "If info is found",
             "schema": {
-              "$ref": "#/definitions/Group"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Group"
+              }
             }
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/search/{size}/{number}":{
+      "get": {
+        "operationId": "searchGroups",
+        "tags": [
+          "group"
+        ],
+        "summary": "Search for groups which names contain given string",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "Part of the searched group name"
+          },
+          {
+            "name": "size",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "description": "Size of page of users"
+          },
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of page of users"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If invitation is accepted",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Group"
+              }
+            }
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/invite/{userId}":{
+      "post": {
+        "operationId": "inviteUserToGroup",
+        "tags": [
+          "group"
+        ],
+        "summary": "Invite user to group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "User id"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If invitation is sent"
+          },
+          "404": {
+            "description": "If group or user is not found"
+          },
+          "409": {
+            "description": "If user already belongs to group"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/leave":{
+      "post": {
+        "operationId": "leaveGroup",
+        "tags": [
+          "group"
+        ],
+        "summary": "Leave group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If group is left"
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "409": {
+            "description": "If user does not belong to group"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/join":{
+      "post": {
+        "operationId": "joinGroup",
+        "tags": [
+          "group"
+        ],
+        "summary": "Request permission to join the group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If request is saved"
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "409": {
+            "description": "If user already belongs to group"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/accept/{userId}":{
+      "post": {
+        "operationId": "acceptUserIntoGroup",
+        "tags": [
+          "group"
+        ],
+        "summary": "Accept user into group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "User id"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If user is accepted"
+          },
+          "404": {
+            "description": "If group or user is not found"
+          },
+          "409": {
+            "description": "If user is already a member"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/reject/{userId}":{
+      "delete": {
+        "operationId": "rejectUserIntoGroup",
+        "tags": [
+          "group"
+        ],
+        "summary": "Reject user's request to join the group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "User id"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If user is rejected successfully"
+          },
+          "404": {
+            "description": "If group or user is not found"
+          },
+          "409": {
+            "description": "If user is already a member or was not invited"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/acceptInvitation":{
+      "post": {
+        "operationId": "acceptInvitation",
+        "tags": [
+          "group"
+        ],
+        "summary": "Accept invitation and join the group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If invitation is accepted"
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "409": {
+            "description": "If user already belongs to group or was not invited"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/rejectInvitation":{
+      "delete": {
+        "operationId": "rejectInvitation",
+        "tags": [
+          "group"
+        ],
+        "summary": "Reject invitation to the group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "If invitation is rejected successfully"
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "409": {
+            "description": "If user already belongs to group or was not invited"
           },
           "400": {
             "description": "If error occurs"
@@ -471,7 +897,7 @@
     "AffiliationType": {
       "type": "string",
       "enum": [
-        "ACCEPTED", "PENDING_INVITATION", "WAITING_FOR_ACCEPTANCE"
+        "MEMBER", "PENDING_INVITATION", "WAITING_FOR_ACCEPTANCE"
       ]
     },
     "Affiliation": {
@@ -482,6 +908,10 @@
         },
         "state": {
           "$ref": "#/definitions/AffiliationType"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
         }
       },
       "required": [

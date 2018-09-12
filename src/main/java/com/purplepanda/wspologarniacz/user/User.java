@@ -1,5 +1,6 @@
 package com.purplepanda.wspologarniacz.user;
 
+import com.purplepanda.wspologarniacz.group.Affiliation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -46,6 +49,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private List<AuthorityName> authorities = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @Builder.Default
+    private Set<Affiliation> affiliations = new HashSet<>();
 
     @Override
     public String getUsername() {

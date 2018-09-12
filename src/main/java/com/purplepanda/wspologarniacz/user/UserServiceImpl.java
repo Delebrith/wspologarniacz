@@ -11,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -131,6 +132,11 @@ class UserServiceImpl implements UserService, UserDetailsService {
         User user = getUser(userId).orElseThrow(UserNotFoundException::new);
         user.setActive(true);
         userRepository.save(user);
+    }
+
+    @Override
+    public Page<User> searchUsers(String name) {
+        return null;
     }
 
     @Override

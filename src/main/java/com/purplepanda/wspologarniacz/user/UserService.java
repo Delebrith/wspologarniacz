@@ -1,5 +1,7 @@
 package com.purplepanda.wspologarniacz.user;
 
+import org.springframework.data.domain.Page;
+
 import java.util.Optional;
 
 public interface UserService {
@@ -13,4 +15,5 @@ public interface UserService {
     void resetPassword(String token, String password);
     void requestPasswordReset(String email);
     void confirmRegistration(Long userId);
+    Page<User> searchUsers(String name);
 }
