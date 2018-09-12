@@ -65,7 +65,7 @@ class UserServiceImpl implements UserService, UserDetailsService {
         final Optional<User> user = userRepository.findByEmail(email);
         final boolean passwordMatches =
                 user.map(u -> passwordEncoder.matches(password, u.getPassword())).orElse(false);
-        final boolean active = user.map(u ->  u.getActive() ).orElse(false);
+        final boolean active = user.map(User::getActive).orElse(false);
         return (passwordMatches && active) ? user : Optional.empty();
     }
 
