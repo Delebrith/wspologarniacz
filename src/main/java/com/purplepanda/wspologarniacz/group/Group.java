@@ -25,6 +25,7 @@ public class Group {
     private String name;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "group", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "group_id")
     private Set<Affiliation> affiliations = new HashSet<>();
 }

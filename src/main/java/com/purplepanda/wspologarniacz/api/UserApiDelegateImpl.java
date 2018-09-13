@@ -36,12 +36,7 @@ public class UserApiDelegateImpl implements UserApiDelegate {
     @Override
     public ResponseEntity<Void> register(UserDto userData)  {
         User created = userService.register(userMapper.fromDto(userData));
-        try {
-            return ResponseEntity.created(new URI("/user/find/" + created.getId())).build();
-        } catch (URISyntaxException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(500).build(); // should never happen
-        }
+        return ResponseEntity.created(URI.create("/user/find/" + created.getId())).build();
     }
 
     @Override

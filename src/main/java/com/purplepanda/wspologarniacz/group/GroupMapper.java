@@ -20,6 +20,7 @@ public interface GroupMapper {
     }
 
     @Mapping(target = "affiliations", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Group fromDto(GroupDto dto);
 
     GroupDto toDto(Group entity);

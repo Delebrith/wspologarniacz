@@ -442,6 +442,83 @@
         }
       }
     },
+    "/group/find/{groupId}":{
+      "get": {
+        "operationId": "getGroup",
+        "tags": [
+          "group"
+        ],
+        "summary": "Request group info",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If info is found",
+            "schema": {
+              "$ref": "#/definitions/Group"
+            }
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/create":{
+      "post": {
+        "operationId": "createGroup",
+        "tags": [
+          "group"
+        ],
+        "summary": "Create new group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Group"
+            },
+            "description": "Group details"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "If group is successfully created"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
     "/group/{groupId}/invite/{userId}":{
       "post": {
         "operationId": "inviteUserToGroup",
@@ -624,7 +701,7 @@
     },
     "/group/{groupId}/reject/{userId}":{
       "delete": {
-        "operationId": "rejectUserIntoGroup",
+        "operationId": "rejectUserFromGroup",
         "tags": [
           "group"
         ],

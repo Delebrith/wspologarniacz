@@ -14,6 +14,7 @@ public interface UserMapper {
     }
 
     @Mapping(target = "active", ignore = true)
+    @Mapping(target = "id", ignore = true)
     User fromDto(UserDto dto);
 
     @Mapping(target = "password", constant = "***")

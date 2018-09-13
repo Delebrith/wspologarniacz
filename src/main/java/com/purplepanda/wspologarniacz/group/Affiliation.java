@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "group_id"}))
-public class Affiliation {
+class Affiliation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotNull
     @Enumerated(EnumType.STRING)
     private AffiliationState state;
 
@@ -33,8 +33,10 @@ public class Affiliation {
 
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @PrimaryKeyJoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
 }
