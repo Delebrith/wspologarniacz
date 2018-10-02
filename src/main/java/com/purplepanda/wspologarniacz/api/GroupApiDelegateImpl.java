@@ -61,13 +61,13 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
     @Override
     public ResponseEntity<Void> inviteUserToGroup(Long groupId, Long userId) {
         groupService.inviteUser(groupId, userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().build();
     }
 
     @Override
     public ResponseEntity<Void> joinGroup(Long groupId) {
         groupService.joinGroup(groupId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.accepted().build();
     }
 
     @Override
