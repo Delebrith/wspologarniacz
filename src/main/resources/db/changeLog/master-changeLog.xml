@@ -6,4 +6,7 @@
     <include file="user-changeLog.xml"
              relativeToChangelogFile="true" />
 
+    <include file="group-changeLog.xml"
+             relativeToChangelogFile="true" />
+
 </databaseChangeLog>

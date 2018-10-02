@@ -8,9 +8,9 @@ import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -36,12 +36,7 @@ public class UserApiDelegateImpl implements UserApiDelegate {
     @Override
     public ResponseEntity<Void> register(UserDto userData)  {
         User created = userService.register(userMapper.fromDto(userData));
-        try {
-            return ResponseEntity.created(new URI("/user/find/" + created.getId())).build();
-        } catch (URISyntaxException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(500).build(); // should never happen
-        }
+        return ResponseEntity.created(URI.create("/user/find/" + created.getId())).build();
     }
 
     @Override
@@ -79,5 +74,10 @@ public class UserApiDelegateImpl implements UserApiDelegate {
     public ResponseEntity<Void> confirm(Long userId) {
         userService.confirmRegistration(userId);
         return ResponseEntity.accepted().build();
+    }
+
+    @Override
+    public ResponseEntity<List<UserDto>> searchUsers(String name, Integer size, Integer number) {
+        return null;
     }
 }

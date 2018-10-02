@@ -136,7 +136,7 @@ app.controller('userController', function($scope, $http, $cookies, $window) {
     function registerConfirm() {
         var id = $scope.params['userId']
 
-        var response = $http.get("/user/register/" + id + "confirm");
+        var response = $http.post("/user/register/" + id + "confirm");
         response.then(
             function(response) {
                 $scope.confirmationMessage = "Konto aktywowane! Możesz się zalogować."
