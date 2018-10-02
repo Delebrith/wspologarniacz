@@ -36,7 +36,4 @@ class Affiliation {
     @PrimaryKeyJoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @PrimaryKeyJoinColumn(name = "group_id", referencedColumnName = "id")
-    private Group group;
 }
