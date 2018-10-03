@@ -1,9 +1,11 @@
 package com.purplepanda.wspologarniacz.api;
 
 import com.purplepanda.wspologarniacz.api.model.GroupDto;
+import com.purplepanda.wspologarniacz.api.model.TaskDto;
 import com.purplepanda.wspologarniacz.group.Group;
 import com.purplepanda.wspologarniacz.group.GroupMapper;
 import com.purplepanda.wspologarniacz.group.GroupService;
+import com.purplepanda.wspologarniacz.task.TaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
 
     private final GroupService groupService;
     private final GroupMapper groupMapper = GroupMapper.getInstance();
+    private final TaskMapper taskMapper = TaskMapper.getInstance();
 
     @Autowired
     public GroupApiDelegateImpl(GroupService groupService) {
@@ -93,5 +96,21 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
     @Override
     public ResponseEntity<GroupDto> getGroup(Long groupId) {
         return ResponseEntity.ok(groupMapper.toDto(groupService.getGroup(groupId)));
+    }
+
+    @Override
+    public ResponseEntity<Void> createTask(Long groupId, TaskDto taskDto) {
+        Group modified = groupService.createTask(groupId,taskMapper.fromDto(taskDto));
+        return ResponseEntity.created(
+                URI.create("/group/" + modified.getId() + "/tasks"))
+                .build();
+    }
+
+    @Override
+    public ResponseEntity<List<TaskDto>> getTasks(Long groupId) {
+        return ResponseEntity.ok(groupService.getGroup(groupId).getTasks().stream()
+            .map(taskMapper::toDto)
+            .collect(Collectors.toList())
+        );
     }
 }

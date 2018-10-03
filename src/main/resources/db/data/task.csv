@@ -1,0 +1,4 @@
+ID,GROUP_ID,NAME,DESCRIPTION,LAST_MODIFIED_BY,STATUS,UPDATE_TIME
+1,1,Kupić mleko,Łaciate najlepsze,1,ADDED,2018-09-12 12:00:00
+2,1,Odebrać pocztę,Skrzynka na listy jest pełna,1,DONE,2018-09-11 13:00:00
+3,2,Wynieść śmieci,,3,ADDED,2018-09-11 14:00:00

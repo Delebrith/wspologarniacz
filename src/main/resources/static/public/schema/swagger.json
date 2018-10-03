@@ -1226,10 +1226,10 @@
         "user", "state"
       ]
     },
-    "TaskState": {
+    "TaskStatus": {
       "type": "string",
       "enum": [
-        "CREATED", "DONE"
+        "ADDED", "DONE"
       ]
     },
     "Task": {
@@ -1245,10 +1245,10 @@
         "description": {
           "type": "string"
         },
-        "state": {
-          "$ref": "#/definitions/AffiliationType"
+        "status": {
+          "$ref": "#/definitions/TaskStatus"
         },
-        "lastUpdated": {
+        "updateTime": {
           "type": "string",
           "format": "date-time"
         },
@@ -1257,7 +1257,7 @@
         }
       },
       "required": [
-        "user", "state"
+        "name"
       ]
     }
   }

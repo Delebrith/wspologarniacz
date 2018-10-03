@@ -1,5 +1,6 @@
 package com.purplepanda.wspologarniacz.group;
 
+import com.purplepanda.wspologarniacz.task.Task;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +29,10 @@ public class Group {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id")
     private Set<Affiliation> affiliations = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "group_id")
+    private Set<Task> tasks = new HashSet<>();
+
 }

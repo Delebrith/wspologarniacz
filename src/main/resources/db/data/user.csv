@@ -1,2 +1,4 @@
 ID,EMAIL,PASSWORD,NAME,ACTIVE
 1,user1@mail.com,$2a$04$HsrD/Q.AznOcwyQNq7y9CePx4vTYW/OjPE1u.eRP9LJm1.Y78KsWe,User1 User1,TRUE
+2,user2@mail.com,$2a$04$HsrD/Q.AznOcwyQNq7y9CePx4vTYW/OjPE1u.eRP9LJm1.Y78KsWe,User2 User2,TRUE
+3,user3@mail.com,$2a$04$HsrD/Q.AznOcwyQNq7y9CePx4vTYW/OjPE1u.eRP9LJm1.Y78KsWe,User3 User3,TRUE

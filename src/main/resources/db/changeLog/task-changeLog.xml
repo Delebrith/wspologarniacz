@@ -1,0 +1,70 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet author="liquidbase" id="001">
+        <createTable tableName="task">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="group_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(50)">
+            </column>
+            <column name="update_time" type="TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(512)">
+                <constraints nullable="true" />
+            </column>
+            <column name="last_modified_by" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
+
+        </createTable>
+        <addForeignKeyConstraint baseTableName="task"
+                                 baseColumnNames="last_modified_by" constraintName="task_modifier_fk"
+                                 referencedTableName="user_" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="task"
+                                 baseColumnNames="group_id" constraintName="task_group_fk"
+                                 referencedTableName="group_" referencedColumnNames="id" />
+        <addAutoIncrement tableName="task" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <loadData encoding="UTF-8"
+                  file="db/data/task.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="task">
+        </loadData>
+
+        <createTable tableName="authorized">
+            <column name="user_id" type="BIGINT">
+            </column>
+            <column name="task_id" type="BIGINT">
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="authorized" columnNames="user_id, task_id"/>
+        <addForeignKeyConstraint baseTableName="authorized"
+                                 baseColumnNames="user_id" constraintName="user_authorized_fk"
+                                 referencedTableName="user_" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="authorized"
+                                 baseColumnNames="task_id" constraintName="task_authorized_fk"
+                                 referencedTableName="task" referencedColumnNames="id" />
+        <loadData encoding="UTF-8"
+                  file="db/data/authorized.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="authorized">
+        </loadData>
+
+    </changeSet>
+
+</databaseChangeLog>

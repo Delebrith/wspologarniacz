@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class Task {
 
     @Id
@@ -22,17 +23,22 @@ public class Task {
     @NotBlank
     private String name;
 
+    private String description;
+
     @NotNull
     @Enumerated(EnumType.STRING)
-    private TaskStatus status;
+    @Builder.Default
+    private TaskStatus status = TaskStatus.ADDED;
 
     @NotNull
     private LocalDateTime updateTime;
 
     @ManyToOne
+    @JoinColumn(name = "last_modified_by")
     private User lastModifiedBy;
 
     @ManyToMany
+    @JoinTable(name = "authorized", inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> authorized;
 
 }

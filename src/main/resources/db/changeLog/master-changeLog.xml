@@ -9,4 +9,7 @@
     <include file="group-changeLog.xml"
              relativeToChangelogFile="true" />
 
+    <include file="task-changeLog.xml"
+             relativeToChangelogFile="true" />
+
 </databaseChangeLog>

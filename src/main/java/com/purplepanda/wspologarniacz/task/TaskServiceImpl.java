@@ -5,6 +5,8 @@ import com.purplepanda.wspologarniacz.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TaskServiceImpl implements TaskService {
 
@@ -29,6 +31,8 @@ public class TaskServiceImpl implements TaskService {
         Task marked = taskRepository.findById(taskId).orElseThrow(TaskNotFoundException::new);
         authorize(marked);
         marked.setStatus(TaskStatus.DONE);
+        marked.setLastModifiedBy(userService.getAuthenticatedUser());
+        marked.setUpdateTime(LocalDateTime.now());
         return taskRepository.save(marked);
     }
 
@@ -38,6 +42,8 @@ public class TaskServiceImpl implements TaskService {
         authorize(modified);
         if (!modified.getStatus().equals(task.getStatus()))
             throw new UnauthorizedResourceModificationException();
+        modified.setLastModifiedBy(userService.getAuthenticatedUser());
+        modified.setUpdateTime(LocalDateTime.now());
         return taskRepository.save(task);
     }
 

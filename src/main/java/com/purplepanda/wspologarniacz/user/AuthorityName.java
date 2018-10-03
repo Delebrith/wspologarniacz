@@ -2,7 +2,7 @@ package com.purplepanda.wspologarniacz.user;
 
 import org.springframework.security.core.GrantedAuthority;
 
-enum AuthorityName implements GrantedAuthority {
+public enum AuthorityName implements GrantedAuthority {
     ADMIN, USER;
 
     @Override
