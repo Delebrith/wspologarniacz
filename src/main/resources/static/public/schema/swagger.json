@@ -862,11 +862,11 @@
             "description": "Group id"
           },
           {
-            "name": "taskDto",
+            "name": "taskInfoDto",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Task"
+              "$ref": "#/definitions/TaskInfo"
             },
             "description": "Task details"
           }
@@ -1013,7 +1013,7 @@
         }
       }
     },
-    "/task/modify":{
+    "/task/{taskId}/modify":{
       "post": {
         "operationId": "modify",
         "tags": [
@@ -1033,11 +1033,19 @@
         ],
         "parameters": [
           {
-            "name": "taskDto",
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Task id"
+          },
+          {
+            "name": "taskInfoDto",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Task"
+              "$ref": "#/definitions/TaskInfo"
             },
             "description": "Task details"
           }
@@ -1254,6 +1262,20 @@
         },
         "lastModifiedBy": {
           "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "TaskInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
         }
       },
       "required": [

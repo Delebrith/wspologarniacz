@@ -1,6 +1,9 @@
 package com.purplepanda.wspologarniacz.base.config.web;
 
 import com.purplepanda.wspologarniacz.api.model.ErrorDto;
+import com.purplepanda.wspologarniacz.group.exception.GroupNotFoundException;
+import com.purplepanda.wspologarniacz.group.exception.InvalidAffiliationStateException;
+import com.purplepanda.wspologarniacz.task.TaskNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.IncorrectTokenException;
 import com.purplepanda.wspologarniacz.user.exception.RequestNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.UserAlreadyExistsException;
@@ -18,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 public class DefaultExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({UserNotFoundException.class, UsernameNotFoundException.class, RequestNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, UsernameNotFoundException.class, RequestNotFoundException.class,
+            GroupNotFoundException.class, TaskNotFoundException.class})
     @ResponseBody
     ErrorDto handleResourceNotFound(final HttpServletRequest req, final Exception ex) {
         return new ErrorDto()
@@ -38,7 +42,8 @@ public class DefaultExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler({UserAlreadyExistsException.class})
+    @ExceptionHandler({UserAlreadyExistsException.class, InvalidAffiliationStateException.class,
+            InvalidResourceStateException.class})
     @ResponseBody
     ErrorDto handleResourceAlreadyExists(final HttpServletRequest req, final Exception ex) {
         return new ErrorDto()

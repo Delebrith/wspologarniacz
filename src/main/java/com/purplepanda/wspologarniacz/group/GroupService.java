@@ -19,5 +19,5 @@ public interface GroupService {
     Group createGroup(Group group);
     Group getGroup(Long groupId);
 
-    Group createTask(Long groupId, Task task);
+    Group createTask(Long groupId, String name, String description);
 }

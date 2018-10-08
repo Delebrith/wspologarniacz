@@ -2,6 +2,7 @@ package com.purplepanda.wspologarniacz.api;
 
 import com.purplepanda.wspologarniacz.api.model.GroupDto;
 import com.purplepanda.wspologarniacz.api.model.TaskDto;
+import com.purplepanda.wspologarniacz.api.model.TaskInfoDto;
 import com.purplepanda.wspologarniacz.group.Group;
 import com.purplepanda.wspologarniacz.group.GroupMapper;
 import com.purplepanda.wspologarniacz.group.GroupService;
@@ -99,8 +100,8 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Void> createTask(Long groupId, TaskDto taskDto) {
-        Group modified = groupService.createTask(groupId,taskMapper.fromDto(taskDto));
+    public ResponseEntity<Void> createTask(Long groupId, TaskInfoDto taskInfoDto) {
+        Group modified = groupService.createTask(groupId, taskInfoDto.getName(), taskInfoDto.getDescription());
         return ResponseEntity.created(
                 URI.create("/group/" + modified.getId() + "/tasks"))
                 .build();

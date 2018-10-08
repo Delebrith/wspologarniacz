@@ -1,7 +1,7 @@
-package com.purplepanda.wspologarniacz.task;
+package com.purplepanda.wspologarniacz.base.config.web;
 
 public class UnauthorizedResourceModificationException extends RuntimeException {
-    UnauthorizedResourceModificationException() {
+    public UnauthorizedResourceModificationException() {
         super("User unauthorized to modify requested resource");
     }
 }

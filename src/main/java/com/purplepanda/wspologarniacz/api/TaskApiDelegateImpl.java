@@ -1,6 +1,7 @@
 package com.purplepanda.wspologarniacz.api;
 
 import com.purplepanda.wspologarniacz.api.model.TaskDto;
+import com.purplepanda.wspologarniacz.api.model.TaskInfoDto;
 import com.purplepanda.wspologarniacz.task.TaskMapper;
 import com.purplepanda.wspologarniacz.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,9 @@ public class TaskApiDelegateImpl implements TaskApiDelegate {
     }
 
     @Override
-    public ResponseEntity<TaskDto> modify(TaskDto taskDto) {
-        return ResponseEntity.ok(taskMapper.toDto(taskService.modify(taskMapper.fromDto(taskDto))));
+    public ResponseEntity<TaskDto> modify(Long taskId, TaskInfoDto taskInfoDto) {
+        return ResponseEntity.ok(taskMapper.toDto(
+                taskService.modify(taskId, taskInfoDto.getName(), taskInfoDto.getDescription())
+        ));
     }
 }

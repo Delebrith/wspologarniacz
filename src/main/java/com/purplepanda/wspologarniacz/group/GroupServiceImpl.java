@@ -192,19 +192,25 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Group createTask(Long groupId, Task task) {
+    public Group createTask(Long groupId, String name, String description) {
         Group group = getGroup(groupId);
         checkAccessRights(group);
-        task.setAuthorized(
-                group.getAffiliations().stream()
-                    .filter(a -> a.getState().equals(AffiliationState.MEMBER))
-                    .map(Affiliation::getUser)
-                    .collect(Collectors.toSet())
-        );
-        task.setLastModifiedBy(userService.getAuthenticatedUser());
-        task.setStatus(TaskStatus.ADDED);
-        task.setUpdateTime(LocalDateTime.now());
-        group.getTasks().add(task);
+
+        Set<User> authorized  = group.getAffiliations().stream()
+                .filter(a -> a.getState().equals(AffiliationState.MEMBER))
+                .map(Affiliation::getUser)
+                .collect(Collectors.toSet());
+
+        Task created = Task.builder()
+                .name(name)
+                .description(description)
+                .lastModifiedBy(userService.getAuthenticatedUser())
+                .status(TaskStatus.ADDED)
+                .updateTime(LocalDateTime.now())
+                .authorized(authorized)
+                .build();
+
+        group.getTasks().add(created);
         return groupRepository.save(group);
     }
 
@@ -221,7 +227,7 @@ public class GroupServiceImpl implements GroupService {
                 .filter(a -> a.getState().equals(AffiliationState.MEMBER))
                 .map(a -> a.getUser())
                 .collect(Collectors.toSet());
-        group.getTasks().stream()
+        group.getTasks()
                 .forEach(t -> t.setAuthorized(authorized));
         // to be expanded
     }

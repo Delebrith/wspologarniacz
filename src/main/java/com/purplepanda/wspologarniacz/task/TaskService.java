@@ -5,5 +5,5 @@ public interface TaskService {
 
     Task markAsDone(Long taskId);
 
-    Task modify(Task task);
+    Task modify(Long taskId, String name, String description);
 }

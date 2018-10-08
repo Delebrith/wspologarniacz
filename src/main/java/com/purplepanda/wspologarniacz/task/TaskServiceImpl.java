@@ -1,5 +1,7 @@
 package com.purplepanda.wspologarniacz.task;
 
+import com.purplepanda.wspologarniacz.base.config.web.InvalidResourceStateException;
+import com.purplepanda.wspologarniacz.base.config.web.UnauthorizedResourceModificationException;
 import com.purplepanda.wspologarniacz.user.User;
 import com.purplepanda.wspologarniacz.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +39,18 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task modify(Task task) {
-        Task modified = taskRepository.findById(task.getId()).orElseThrow(TaskNotFoundException::new);
+    public Task modify(Long taskId, String name, String description) {
+        Task modified = taskRepository.findById(taskId).orElseThrow(TaskNotFoundException::new);
         authorize(modified);
-        if (!modified.getStatus().equals(task.getStatus()))
-            throw new UnauthorizedResourceModificationException();
+
+        if (modified.getStatus().equals(TaskStatus.DONE))
+            throw new InvalidResourceStateException();
+
+        modified.setName(name);
+        modified.setDescription(description);
         modified.setLastModifiedBy(userService.getAuthenticatedUser());
         modified.setUpdateTime(LocalDateTime.now());
-        return taskRepository.save(task);
+        return taskRepository.save(modified);
     }
 
     private void authorize(Task task) {
