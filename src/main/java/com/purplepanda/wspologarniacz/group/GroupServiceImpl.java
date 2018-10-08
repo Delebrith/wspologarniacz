@@ -159,7 +159,8 @@ public class GroupServiceImpl implements GroupService {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
 
         Affiliation affiliation = group.getAffiliations().stream()
-                .filter(a -> a.getUser().equals(user) && a.getState().equals(AffiliationState.MEMBER))
+                .filter(a -> a.getUser().equals(user)
+                        && (a.getState().equals(AffiliationState.MEMBER) || a.getState().equals(AffiliationState.WAITING_FOR_ACCEPTANCE)))
                 .findFirst()
                 .orElseThrow(InvalidAffiliationStateException::new);
 
