@@ -265,6 +265,8 @@ class GroupServiceImplSpecification extends Specification {
 
         then: "other user is accepted"
         group.affiliations.any {a -> a.getUser() == processed && a.state == AffiliationState.MEMBER}
+        group.tasks.every {task -> task.authorized.contains(processed)}
+
     }
 
     void "non-member should fail to accept user to his group"() {
@@ -494,6 +496,7 @@ class GroupServiceImplSpecification extends Specification {
         then: "user becomes member"
         group.affiliations.any {
             affiliation -> affiliation.user == authenticated && affiliation.state == AffiliationState.MEMBER}
+        group.tasks.every {task -> task.authorized.contains(authenticated)}
     }
 
     void "not invited user should fail accept invitation to a group"() {
@@ -596,6 +599,7 @@ class GroupServiceImplSpecification extends Specification {
 
         then: "affiliation is deleted"
         group.affiliations.every {affiliation -> affiliation.user != authenticated}
+        group.tasks.every {task -> !task.authorized.contains(authenticated)}
     }
 
     void "non-affiliated user should fail to leave a group"() {
