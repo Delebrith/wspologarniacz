@@ -14,7 +14,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class TaskApiDelegateSpecification extends Specification {
+class TaskApiDelegateImplSpecification extends Specification {
 
     //mocked
     private TaskService taskService
@@ -123,7 +123,7 @@ class TaskApiDelegateSpecification extends Specification {
         given: "non-existing task"
         taskService.modify(task.id, taskInfoDto.name, taskInfoDto.description) >> { throw new TaskNotFoundException() }
 
-        when: "user marks task as done"
+        when: "user modifies task"
         ResponseEntity responseEntity = taskApiDelegate.modify(task.id, taskInfoDto)
 
         then: "exception is thrown"
@@ -134,7 +134,7 @@ class TaskApiDelegateSpecification extends Specification {
         given: "non-existing task"
         taskService.modify(task.id, taskInfoDto.name, taskInfoDto.description) >> { throw new InvalidResourceStateException() }
 
-        when: "user marks task as done"
+        when: "user modifies task"
         ResponseEntity responseEntity = taskApiDelegate.modify(task.id, taskInfoDto)
 
         then: "exception is thrown"
@@ -145,7 +145,7 @@ class TaskApiDelegateSpecification extends Specification {
     void "authorized user should successfully delete task"() {
         given: "task for authenticated user"
 
-        when: "user modifies task"
+        when: "user deletes task"
         ResponseEntity responseEntity = taskApiDelegate.deleteTask(task.id)
 
         then: "response is success"
@@ -156,7 +156,7 @@ class TaskApiDelegateSpecification extends Specification {
         given: "user not authorized to modify the task"
         taskService.deleteTask(task.id) >> { throw new UnauthorizedResourceModificationException() }
 
-        when: "user modifies task"
+        when: "user deletes task"
         ResponseEntity responseEntity = taskApiDelegate.deleteTask(task.id)
 
         then: "exception is thrown"
@@ -167,7 +167,7 @@ class TaskApiDelegateSpecification extends Specification {
         given: "non-existing task"
         taskService.deleteTask(task.id) >> { throw new TaskNotFoundException() }
 
-        when: "user marks task as done"
+        when: "deletes task"
         ResponseEntity responseEntity = taskApiDelegate.deleteTask(task.id)
 
         then: "exception is thrown"

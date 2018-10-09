@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -39,6 +40,7 @@ public class Task {
 
     @ManyToMany
     @JoinTable(name = "authorized", inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<User> authorized;
+    @Builder.Default
+    private Set<User> authorized = new HashSet<>();
 
 }

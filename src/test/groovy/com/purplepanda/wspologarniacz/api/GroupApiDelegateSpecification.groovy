@@ -22,7 +22,7 @@ import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 import java.time.LocalDateTime
 
-class GroupApiDelegateSpec extends Specification {
+class GroupApiDelegateSpecification extends Specification {
 
     //mocked
     private GroupService groupService
@@ -83,7 +83,7 @@ class GroupApiDelegateSpec extends Specification {
         )
         groupService.getAuthenticatedUsersGroups() >> Collections.singletonList(group)
 
-        when: "user requests hid groups info"
+        when: "user requests his groups info"
         ResponseEntity<List<GroupDto>> responseEntity = groupApiDelegate.getMyGroups()
 
         then: "group list is successfully returned"
@@ -249,7 +249,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "member of group and user not waitin for acceptance"
         groupService.inviteUser(group.id, processed.id) >> { throw new InvalidAffiliationStateException() }
 
-        when: "inviting other user"
+        when: "accepting other user"
         ResponseEntity responseEntity = groupApiDelegate.inviteUserToGroup(group.id, processed.id)
 
         then: "exception is thrown"
@@ -261,7 +261,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "non-existing group"
         groupService.inviteUser(group.id, processed.id) >> { throw new GroupNotFoundException() }
 
-        when: "inviting other user"
+        when: "accepting other user"
         ResponseEntity responseEntity = groupApiDelegate.inviteUserToGroup(group.id, processed.id)
 
         then: "exception is thrown"
@@ -273,7 +273,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "member of group and non-existing user"
         groupService.inviteUser(group.id, processed.id) >> { throw new UserNotFoundException() }
 
-        when: "inviting other user"
+        when: "accepting other user"
         ResponseEntity responseEntity = groupApiDelegate.inviteUserToGroup(group.id, processed.id)
 
         then: "exception is thrown"
@@ -374,7 +374,7 @@ class GroupApiDelegateSpec extends Specification {
     void "invited user should successfully accept invitation to a group"() {
         given: "invited user"
 
-        when: "joining group"
+        when: "accepting invitation"
         ResponseEntity responseEntity = groupApiDelegate.acceptInvitation(group.id)
 
         then: "response is success"
@@ -385,7 +385,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "not invited user"
         groupService.acceptInvitation(group.id) >> { throw new InvalidAffiliationStateException() }
 
-        when: "joining group"
+        when: "accepting invitation"
         ResponseEntity responseEntity = groupApiDelegate.acceptInvitation(group.id)
 
         then: "exception is thrown"
@@ -396,7 +396,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "non-existing group"
         groupService.acceptInvitation(group.id) >> { throw new GroupNotFoundException() }
 
-        when: "joining group"
+        when: "accepting invitation"
         ResponseEntity responseEntity = groupApiDelegate.acceptInvitation(group.id)
 
         then: "exception is thrown"
@@ -407,7 +407,7 @@ class GroupApiDelegateSpec extends Specification {
     void "invited user should successfully reject invitation to a group"() {
         given: "invited user"
 
-        when: "joining group"
+        when: "rejecting invitation"
         ResponseEntity responseEntity = groupApiDelegate.rejectInvitation(group.id)
 
         then: "response is success"
@@ -418,7 +418,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "not invited user"
         groupService.rejectInvitation(group.id) >> { throw new InvalidAffiliationStateException() }
 
-        when: "joining group"
+        when: "rejecting invitation"
         ResponseEntity responseEntity = groupApiDelegate.rejectInvitation(group.id)
 
         then: "exception is thrown"
@@ -429,7 +429,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "non-existing group"
         groupService.rejectInvitation(group.id) >> { throw new GroupNotFoundException() }
 
-        when: "joining group"
+        when: "rejecting invitation"
         ResponseEntity responseEntity = groupApiDelegate.rejectInvitation(group.id)
 
         then: "exception is thrown"
@@ -440,7 +440,7 @@ class GroupApiDelegateSpec extends Specification {
     void "affiliated user should successfully leave group"() {
         given: "affiliated user"
 
-        when: "joining group"
+        when: "leaving group"
         ResponseEntity responseEntity = groupApiDelegate.leaveGroup(group.id)
 
         then: "response is success"
@@ -451,7 +451,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "non-affiliated user"
         groupService.leaveGroup(group.id) >> { throw new InvalidAffiliationStateException() }
 
-        when: "joining group"
+        when: "leaving group"
         ResponseEntity responseEntity = groupApiDelegate.leaveGroup(group.id)
 
         then: "exception is thrown"
@@ -462,7 +462,7 @@ class GroupApiDelegateSpec extends Specification {
         given: "non-existing group"
         groupService.leaveGroup(group.id) >> { throw new GroupNotFoundException() }
 
-        when: "joining group"
+        when: "leaving group"
         ResponseEntity responseEntity = groupApiDelegate.leaveGroup(group.id)
 
         then: "exception is thrown"

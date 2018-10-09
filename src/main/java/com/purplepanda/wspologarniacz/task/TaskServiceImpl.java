@@ -32,6 +32,8 @@ public class TaskServiceImpl implements TaskService {
     public Task markAsDone(Long taskId) {
         Task marked = taskRepository.findById(taskId).orElseThrow(TaskNotFoundException::new);
         authorize(marked);
+        if (marked.getStatus().equals(TaskStatus.DONE))
+            throw new InvalidResourceStateException();
         marked.setStatus(TaskStatus.DONE);
         marked.setLastModifiedBy(userService.getAuthenticatedUser());
         marked.setUpdateTime(LocalDateTime.now());

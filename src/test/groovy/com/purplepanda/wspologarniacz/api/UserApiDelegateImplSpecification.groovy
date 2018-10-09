@@ -12,7 +12,7 @@ import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException
 import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
-class UserApiDelegateImplSpec extends Specification {
+class UserApiDelegateImplSpecification extends Specification {
 
     //Mocked
     private UserService userService
