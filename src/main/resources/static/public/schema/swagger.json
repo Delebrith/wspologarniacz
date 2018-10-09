@@ -17,6 +17,10 @@
     {
       "name": "group",
       "description": "Group-related operations"
+    },
+    {
+      "name": "task",
+      "description": "Task-related operations"
     }
   ],
   "securityDefinitions": {
@@ -594,7 +598,7 @@
           }
         ],
         "responses": {
-          "202": {
+          "204": {
             "description": "If group is left"
           },
           "404": {
@@ -684,7 +688,7 @@
           }
         ],
         "responses": {
-          "202": {
+          "204": {
             "description": "If user is accepted"
           },
           "404": {
@@ -733,7 +737,7 @@
           }
         ],
         "responses": {
-          "202": {
+          "204": {
             "description": "If user is rejected successfully"
           },
           "404": {
@@ -774,7 +778,7 @@
           }
         ],
         "responses": {
-          "202": {
+          "204": {
             "description": "If invitation is accepted"
           },
           "404": {
@@ -815,7 +819,7 @@
           }
         ],
         "responses": {
-          "202": {
+          "204": {
             "description": "If invitation is rejected successfully"
           },
           "404": {
@@ -823,6 +827,241 @@
           },
           "409": {
             "description": "If user already belongs to group or was not invited"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/add/task":{
+      "post": {
+        "operationId": "createTask",
+        "tags": [
+          "group"
+        ],
+        "summary": "Create new task and add it to the group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          },
+          {
+            "name": "taskInfoDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskInfo"
+            },
+            "description": "Task details"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "If task was created successfully"
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/tasks":{
+      "get": {
+        "operationId": "getTasks",
+        "tags": [
+          "group"
+        ],
+        "summary": "Get group's tasklist",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If tasklist was found successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Task"
+              }
+            }
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/task/{taskId}/delete":{
+      "delete": {
+        "operationId": "deleteTask",
+        "tags": [
+          "task"
+        ],
+        "summary": "delete task",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Task id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "If task was deleted successfully"
+          },
+          "401": {
+            "description": "If user is not authorized to modify this task"
+          },
+          "404": {
+            "description": "If task is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/task/{taskId}/done":{
+      "post": {
+        "operationId": "markTaskAsDone",
+        "tags": [
+          "task"
+        ],
+        "summary": "delete task",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Task id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If task was marked as done successfully",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          "401": {
+            "description": "If user is not authorized to modify this task"
+          },
+          "404": {
+            "description": "If task is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/task/{taskId}/modify":{
+      "post": {
+        "operationId": "modify",
+        "tags": [
+          "task"
+        ],
+        "summary": "modify task",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Task id"
+          },
+          {
+            "name": "taskInfoDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TaskInfo"
+            },
+            "description": "Task details"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If task was modified successfully",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          },
+          "401": {
+            "description": "If user is not authorized to modify this task"
+          },
+          "404": {
+            "description": "If task is not found"
           },
           "400": {
             "description": "If error occurs"
@@ -993,6 +1232,54 @@
       },
       "required": [
         "user", "state"
+      ]
+    },
+    "TaskStatus": {
+      "type": "string",
+      "enum": [
+        "ADDED", "DONE"
+      ]
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/TaskStatus"
+        },
+        "updateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastModifiedBy": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "TaskInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
       ]
     }
   }

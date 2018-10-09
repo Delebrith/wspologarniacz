@@ -3,6 +3,8 @@ package com.purplepanda.wspologarniacz.group;
 import com.purplepanda.wspologarniacz.group.exception.GroupNotFoundException;
 import com.purplepanda.wspologarniacz.group.exception.InvalidAffiliationStateException;
 import com.purplepanda.wspologarniacz.group.exception.NotGroupMemberException;
+import com.purplepanda.wspologarniacz.task.Task;
+import com.purplepanda.wspologarniacz.task.TaskStatus;
 import com.purplepanda.wspologarniacz.user.User;
 import com.purplepanda.wspologarniacz.user.UserService;
 import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException;
@@ -14,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -93,6 +97,7 @@ public class GroupServiceImpl implements GroupService {
                 .findFirst()
                 .orElseThrow(InvalidAffiliationStateException::new);
         affiliation.setState(AffiliationState.MEMBER);
+        updateResourceAccessRights(group);
 
         groupRepository.save(group);
     }
@@ -110,6 +115,7 @@ public class GroupServiceImpl implements GroupService {
                 .findFirst()
                 .orElseThrow(InvalidAffiliationStateException::new);
         affiliation.setState(AffiliationState.MEMBER);
+        updateResourceAccessRights(group);
 
         groupRepository.save(group);
     }
@@ -153,11 +159,13 @@ public class GroupServiceImpl implements GroupService {
         Group group = groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
 
         Affiliation affiliation = group.getAffiliations().stream()
-                .filter(a -> a.getUser().equals(user) && a.getState().equals(AffiliationState.MEMBER))
+                .filter(a -> a.getUser().equals(user)
+                        && (a.getState().equals(AffiliationState.MEMBER) || a.getState().equals(AffiliationState.WAITING_FOR_ACCEPTANCE)))
                 .findFirst()
                 .orElseThrow(InvalidAffiliationStateException::new);
 
         group.getAffiliations().remove(affiliation);
+        updateResourceAccessRights(group);
 
         if (group.getAffiliations().isEmpty()) {
             groupRepository.delete(group);
@@ -184,11 +192,44 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.findById(groupId).orElseThrow(GroupNotFoundException::new);
     }
 
+    @Override
+    public Group createTask(Long groupId, String name, String description) {
+        Group group = getGroup(groupId);
+        checkAccessRights(group);
+
+        Set<User> authorized  = group.getAffiliations().stream()
+                .filter(a -> a.getState().equals(AffiliationState.MEMBER))
+                .map(Affiliation::getUser)
+                .collect(Collectors.toSet());
+
+        Task created = Task.builder()
+                .name(name)
+                .description(description)
+                .lastModifiedBy(userService.getAuthenticatedUser())
+                .status(TaskStatus.ADDED)
+                .updateTime(LocalDateTime.now())
+                .authorized(authorized)
+                .build();
+
+        group.getTasks().add(created);
+        return groupRepository.save(group);
+    }
+
     private void checkAccessRights(Group group) {
         User authenticated = userService.getAuthenticatedUser();
         group.getAffiliations().stream()
                 .filter(a -> a.getUser().equals(authenticated) && a.getState().equals(AffiliationState.MEMBER))
                 .findFirst()
                 .orElseThrow(NotGroupMemberException::new);
+    }
+
+    private void updateResourceAccessRights(Group group) {
+        Set<User> authorized = group.getAffiliations().stream()
+                .filter(a -> a.getState().equals(AffiliationState.MEMBER))
+                .map(a -> a.getUser())
+                .collect(Collectors.toSet());
+        group.getTasks()
+                .forEach(t -> t.setAuthorized(authorized));
+        // to be expanded
     }
 }

@@ -18,6 +18,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
@@ -50,6 +51,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.18.2'
 	apt "org.projectlombok:lombok:1.18.2"
 
+	compile('org.mapstruct:mapstruct-jdk8:1.2.0.Final')
+	apt('org.mapstruct:mapstruct-processor:1.2.0.Final')
+
 	compile('io.jsonwebtoken:jjwt:0.7.0')
 
 	testCompile('junit:junit:4.12')
@@ -59,8 +63,6 @@ dependencies {
 
 	testRuntime('com.athaydes:spock-reports:1.6.0')
 
-	compile('org.mapstruct:mapstruct-jdk8:1.2.0.Final')
-	apt('org.mapstruct:mapstruct-processor:1.2.0.Final')
 
 	compile('org.springframework.boot:spring-boot-starter-freemarker')
 	compile('org.springframework.boot:spring-boot-starter-mail')
