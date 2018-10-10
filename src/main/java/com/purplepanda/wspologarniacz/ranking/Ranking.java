@@ -1,7 +1,6 @@
-package com.purplepanda.wspologarniacz.group;
+package com.purplepanda.wspologarniacz.ranking;
 
-import com.purplepanda.wspologarniacz.ranking.Ranking;
-import com.purplepanda.wspologarniacz.task.Task;
+import com.purplepanda.wspologarniacz.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +15,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity(name = "GROUP_")
-public class Group {
+@Entity
+public class Ranking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,19 +25,14 @@ public class Group {
     @NotBlank
     private String name;
 
-    @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "group_id")
-    private Set<Affiliation> affiliations = new HashSet<>();
+    @JoinColumn(name = "ranking_id")
+    @Builder.Default
+    private Set<Category> categories = new HashSet<>();
 
-    @Builder.Default
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "group_id")
-    private Set<Task> tasks = new HashSet<>();
-
+    @JoinTable(name = "participants", inverseJoinColumns = @JoinColumn(name = "user_id"))
     @Builder.Default
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "group_id")
-    private Set<Ranking> rankings = new HashSet<>();
+    private Set<User> participants = new HashSet<>();
 
 }
