@@ -1359,7 +1359,7 @@
         }
       }
     },
-    "/ranking/category/{categoryId}":{
+    "/ranking/{rankingId}/category/{categoryId}":{
       "delete": {
         "operationId": "deleteCategory",
         "tags": [
@@ -1385,6 +1385,14 @@
             "type": "integer",
             "format": "int64",
             "description": "category id"
+          },
+          {
+            "name": "rankingId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "category id"
           }
         ],
         "responses": {
@@ -1403,7 +1411,7 @@
         }
       }
     },
-    "/ranking/category/{categoryId}/changePoints/{userId}/by":{
+    "/ranking/{rankingId}/category/{categoryId}/changePoints/{userId}/by":{
       "post": {
         "operationId": "changePoints",
         "tags": [
@@ -1447,6 +1455,14 @@
             "minimum": -10,
             "maximum": 10,
             "description": "points"
+          },
+          {
+            "name": "rankingId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "category id"
           }
         ],
         "responses": {

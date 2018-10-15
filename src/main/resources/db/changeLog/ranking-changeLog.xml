@@ -1,0 +1,85 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet author="liquidbase" id="001">
+        <createTable tableName="ranking">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="group_id" type="BIGINT">
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="ranking"
+                                 baseColumnNames="group_id" constraintName="ranking_group_fk"
+                                 referencedTableName="group_" referencedColumnNames="id" />
+        <addAutoIncrement tableName="ranking" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <loadData encoding="UTF-8"
+                  file="db/data/ranking.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="ranking">
+        </loadData>
+
+        <createTable tableName="category">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="ranking_id" type="BIGINT">
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="category"
+                                 baseColumnNames="ranking_id" constraintName="category_ranking_fk"
+                                 referencedTableName="ranking" referencedColumnNames="id" />
+        <addAutoIncrement tableName="category" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <loadData encoding="UTF-8"
+                  file="db/data/category.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="category">
+        </loadData>
+
+        <createTable tableName="score">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="category_id" type="BIGINT">
+            </column>
+            <column name="user_id" type="BIGINT">
+            </column>
+            <column name="points" type="SMALLINT">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="score"
+                                 baseColumnNames="category_id" constraintName="score_category_fk"
+                                 referencedTableName="category" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="score"
+                                 baseColumnNames="user_id" constraintName="score_user_fk"
+                                 referencedTableName="user_" referencedColumnNames="id" />
+        <addAutoIncrement tableName="score" columnName="id"
+                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <loadData encoding="UTF-8"
+                  file="db/data/score.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="score">
+        </loadData>
+
+
+    </changeSet>
+
+</databaseChangeLog>
