@@ -1696,12 +1696,6 @@
           "items": {
             "$ref": "#/definitions/Category"
           }
-        },
-        "participants": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/User"
-          }
         }
       },
       "required": [
@@ -1732,9 +1726,8 @@
     "Score": {
       "type": "object",
       "properties": {
-        "userId": {
-          "type": "integer",
-          "format": "int64"
+        "user": {
+          "$ref": "#/definitions/User"
         },
         "points": {
           "type": "integer",
@@ -1742,7 +1735,7 @@
         }
       },
       "required": [
-        "userId", "points"
+        "user", "points"
       ]
     }
   }

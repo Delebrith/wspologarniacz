@@ -3,6 +3,8 @@ package com.purplepanda.wspologarniacz.group;
 import com.purplepanda.wspologarniacz.group.exception.GroupNotFoundException;
 import com.purplepanda.wspologarniacz.group.exception.InvalidAffiliationStateException;
 import com.purplepanda.wspologarniacz.group.exception.NotGroupMemberException;
+import com.purplepanda.wspologarniacz.ranking.Category;
+import com.purplepanda.wspologarniacz.ranking.Ranking;
 import com.purplepanda.wspologarniacz.task.Task;
 import com.purplepanda.wspologarniacz.task.TaskStatus;
 import com.purplepanda.wspologarniacz.user.User;
@@ -215,12 +217,36 @@ public class GroupServiceImpl implements GroupService {
         return groupRepository.save(group);
     }
 
+    @Override
+    public Group createRanking(Long groupId, Ranking ranking) {
+        Group group = getGroup(groupId);
+        checkAccessRights(group);
+
+
+
+        return null;
+    }
+
     private void checkAccessRights(Group group) {
         User authenticated = userService.getAuthenticatedUser();
         group.getAffiliations().stream()
                 .filter(a -> a.getUser().equals(authenticated) && a.getState().equals(AffiliationState.MEMBER))
                 .findFirst()
                 .orElseThrow(NotGroupMemberException::new);
+    }
+
+    private void validateRankingParticipants(Group group, Ranking ranking) {
+        Set<User> possibleParticipants  = group.getAffiliations().stream()
+                .filter(a -> a.getState().equals(AffiliationState.MEMBER))
+                .map(Affiliation::getUser)
+                .collect(Collectors.toSet());
+
+        if (!ranking.getCategories().stream()
+                .flatMap(c -> c.getScores().stream())
+                .map(s -> s.getUser())
+                .allMatch(u -> possibleParticipants.contains(u))) {
+            throw new IllegalArgumentException("Participants of the ranking must be group members");
+        }
     }
 
     private void updateResourceAccessRights(Group group) {

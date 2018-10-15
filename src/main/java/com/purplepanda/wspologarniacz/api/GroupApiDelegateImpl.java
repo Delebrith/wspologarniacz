@@ -1,11 +1,13 @@
 package com.purplepanda.wspologarniacz.api;
 
 import com.purplepanda.wspologarniacz.api.model.GroupDto;
+import com.purplepanda.wspologarniacz.api.model.RankingDto;
 import com.purplepanda.wspologarniacz.api.model.TaskDto;
 import com.purplepanda.wspologarniacz.api.model.TaskInfoDto;
 import com.purplepanda.wspologarniacz.group.Group;
 import com.purplepanda.wspologarniacz.group.GroupMapper;
 import com.purplepanda.wspologarniacz.group.GroupService;
+import com.purplepanda.wspologarniacz.ranking.RankingMapper;
 import com.purplepanda.wspologarniacz.task.TaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +25,7 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
     private final GroupService groupService;
     private final GroupMapper groupMapper = GroupMapper.getInstance();
     private final TaskMapper taskMapper = TaskMapper.getInstance();
+    private final RankingMapper rankingMapper = RankingMapper.getInstance();
 
     @Autowired
     public GroupApiDelegateImpl(GroupService groupService) {
@@ -113,5 +116,18 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
             .map(taskMapper::toDto)
             .collect(Collectors.toList())
         );
+    }
+
+    @Override
+    public ResponseEntity<Void> createRanking(Long groupId, RankingDto rankingDto) {
+        Group modified = groupService.createRanking(groupId, rankingMapper.fromDto(rankingDto));
+        return ResponseEntity.created(
+                URI.create("/group/" + modified.getId() + "/tasks"))
+                .build();
+    }
+
+    @Override
+    public ResponseEntity<List<RankingDto>> getRankings(Long groupId) {
+        return null;
     }
 }

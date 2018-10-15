@@ -30,9 +30,4 @@ public class Ranking {
     @Builder.Default
     private Set<Category> categories = new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "participants", inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Builder.Default
-    private Set<User> participants = new HashSet<>();
-
 }
