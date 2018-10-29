@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 @Configuration
 @EnableWebSecurity
-@Order
+@Order(1)
 class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] SWAGGER_ANT_PATTERNS = {
