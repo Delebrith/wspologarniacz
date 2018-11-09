@@ -24,14 +24,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void deleteTask(Long taskId) {
         Task task = taskRepository.findById(taskId).orElseThrow(TaskNotFoundException::new);
-        authorize(task);
+//        authorize(task);
         taskRepository.delete(task);
     }
 
     @Override
     public Task markAsDone(Long taskId) {
         Task marked = taskRepository.findById(taskId).orElseThrow(TaskNotFoundException::new);
-        authorize(marked);
+//        authorize(marked);
         if (marked.getStatus().equals(TaskStatus.DONE))
             throw new InvalidResourceStateException();
         marked.setStatus(TaskStatus.DONE);
@@ -43,7 +43,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public Task modify(Long taskId, String name, String description) {
         Task modified = taskRepository.findById(taskId).orElseThrow(TaskNotFoundException::new);
-        authorize(modified);
+//        authorize(modified);
 
         if (modified.getStatus().equals(TaskStatus.DONE))
             throw new InvalidResourceStateException();
@@ -55,11 +55,11 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(modified);
     }
 
-    private void authorize(Task task) {
-        User authenticated = userService.getAuthenticatedUser();
-        task.getAuthorized().stream()
-                .filter(u -> authenticated.equals(u))
-                .findFirst()
-                .orElseThrow(UnauthorizedResourceModificationException::new);
-    }
+//    private void authorize(Task task) {
+//        User authenticated = userService.getAuthenticatedUser();
+//        task.getAuthorized().stream()
+//                .filter(u -> authenticated.equals(u))
+//                .findFirst()
+//                .orElseThrow(UnauthorizedResourceModificationException::new);
+//    }
 }

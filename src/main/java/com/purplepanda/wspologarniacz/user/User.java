@@ -51,10 +51,10 @@ public class User implements UserDetails {
     @Builder.Default
     private List<AuthorityName> authorities = new ArrayList<>();
 
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "MODIFIABLE_RESOURCES", joinColumns = @JoinColumn(name = "resource_id"))
     @Builder.Default
-    private Set<ModifiableResource> modifiableResources = new HashSet<>();
+    private Set<ModifiableResource> resources = new HashSet<>();
 
     @Override
     public String getUsername() {

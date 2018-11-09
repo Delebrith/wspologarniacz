@@ -210,7 +210,7 @@ public class GroupServiceImpl implements GroupService {
                 .lastModifiedBy(userService.getAuthenticatedUser())
                 .status(TaskStatus.ADDED)
                 .updateTime(LocalDateTime.now())
-                .authorized(authorized)
+//                .authorized(authorized)
                 .build();
 
         group.getTasks().add(created);
@@ -254,8 +254,8 @@ public class GroupServiceImpl implements GroupService {
                 .filter(a -> a.getState().equals(AffiliationState.MEMBER))
                 .map(a -> a.getUser())
                 .collect(Collectors.toSet());
-        group.getTasks()
-                .forEach(t -> t.setAuthorized(authorized));
+//        group.getTasks()
+//                .forEach(t -> t.setAuthorized(authorized));
         // to be expanded
     }
 }

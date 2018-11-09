@@ -19,7 +19,7 @@
                                  baseColumnNames="group_id" constraintName="ranking_group_fk"
                                  referencedTableName="group_" referencedColumnNames="id" />
         <addAutoIncrement tableName="ranking" columnName="id"
-                          columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+                          columnDataType="BIGINT" startWith="11" incrementBy="3"/>
         <loadData encoding="UTF-8"
                   file="db/data/ranking.csv"
                   quotchar="'"
