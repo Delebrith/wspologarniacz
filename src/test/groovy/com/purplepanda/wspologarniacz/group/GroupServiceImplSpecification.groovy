@@ -461,7 +461,6 @@ class GroupServiceImplSpecification extends Specification {
 
         then: "affiliation is deleted"
         group.affiliations.every {affiliation -> affiliation.user != authenticated}
-        group.tasks.every {task -> !task.authorized.contains(authenticated)}
     }
 
     void "non-affiliated user should fail to leave a group"() {
