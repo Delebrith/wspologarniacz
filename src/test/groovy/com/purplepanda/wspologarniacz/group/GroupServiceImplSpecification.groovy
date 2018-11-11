@@ -34,6 +34,7 @@ class GroupServiceImplSpecification extends Specification {
     private Task task
 
     void setup() {
+        eventPublisher = Mock(ApplicationEventPublisher.class)
         userService = Mock(UserService.class)
         groupRepository = Mock(GroupRepository.class)
         groupService = new GroupServiceImpl(userService, groupRepository, eventPublisher)
