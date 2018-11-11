@@ -68,6 +68,7 @@
         <addForeignKeyConstraint baseTableName="request_token"
                                  baseColumnNames="requester_id" constraintName="requester_fk"
                                  referencedTableName="user_" referencedColumnNames="id" />
+
     </changeSet>
 
 </databaseChangeLog>

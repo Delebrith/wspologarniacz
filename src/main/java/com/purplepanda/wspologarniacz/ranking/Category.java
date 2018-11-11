@@ -26,6 +26,7 @@ public class Category {
     private String name;
 
     @OneToMany
+    @JoinColumn(name = "category_id")
     @Builder.Default
     private Set<Score> scores = new HashSet<>();
 }

@@ -1,5 +1,6 @@
 package com.purplepanda.wspologarniacz.base.config.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,7 +39,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(PUBLIC_ANT_PATTERNS).permitAll().and()
                 .authorizeRequests().anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), secretKey, userDetailsService))
+                .addFilter(jwtAuthorizationFilter())
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity
@@ -50,5 +51,10 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
+    }
+
+    @Bean
+    protected JWTAuthorizationFilter jwtAuthorizationFilter() throws Exception {
+        return new JWTAuthorizationFilter(authenticationManager(), secretKey, userDetailsService);
     }
 }

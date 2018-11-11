@@ -1,10 +1,7 @@
 package com.purplepanda.wspologarniacz.ranking;
 
-import com.purplepanda.wspologarniacz.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.purplepanda.wspologarniacz.user.authorization.ModifiableResource;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,15 +9,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-public class Ranking {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@PrimaryKeyJoinColumn(name = "id")
+public class Ranking extends ModifiableResource {
 
     @NotBlank
     private String name;
@@ -29,10 +24,5 @@ public class Ranking {
     @JoinColumn(name = "ranking_id")
     @Builder.Default
     private Set<Category> categories = new HashSet<>();
-
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "participants", inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Builder.Default
-    private Set<User> participants = new HashSet<>();
 
 }

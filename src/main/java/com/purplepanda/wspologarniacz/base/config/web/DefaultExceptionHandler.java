@@ -3,6 +3,7 @@ package com.purplepanda.wspologarniacz.base.config.web;
 import com.purplepanda.wspologarniacz.api.model.ErrorDto;
 import com.purplepanda.wspologarniacz.group.exception.GroupNotFoundException;
 import com.purplepanda.wspologarniacz.group.exception.InvalidAffiliationStateException;
+import com.purplepanda.wspologarniacz.group.exception.NotGroupMemberException;
 import com.purplepanda.wspologarniacz.task.TaskNotFoundException;
 import com.purplepanda.wspologarniacz.user.exception.IncorrectTokenException;
 import com.purplepanda.wspologarniacz.user.exception.RequestNotFoundException;
@@ -48,6 +49,16 @@ public class DefaultExceptionHandler {
     ErrorDto handleResourceAlreadyExists(final HttpServletRequest req, final Exception ex) {
         return new ErrorDto()
                 .code(HttpStatus.CONFLICT.value())
+                .message(ex.getMessage())
+                .uri(req.getRequestURI());
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler({NotGroupMemberException.class, UnauthorizedResourceModificationException.class})
+    @ResponseBody
+    ErrorDto handleNotAuthorizedToModifyResources(final HttpServletRequest req, final Exception ex) {
+        return new ErrorDto()
+                .code(HttpStatus.UNAUTHORIZED.value())
                 .message(ex.getMessage())
                 .uri(req.getRequestURI());
     }

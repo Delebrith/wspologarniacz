@@ -9,7 +9,13 @@
     <include file="group-changeLog.xml"
              relativeToChangelogFile="true" />
 
+    <include file="resource-changeLog.xml"
+             relativeToChangelogFile="true" />
+
     <include file="task-changeLog.xml"
+             relativeToChangelogFile="true" />
+
+    <include file="ranking-changeLog.xml"
              relativeToChangelogFile="true" />
 
 </databaseChangeLog>
