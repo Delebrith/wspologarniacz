@@ -23,8 +23,9 @@ public class TaskAuthorizationAspect {
     @Before(value = "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceAccessAuthorization) && args(task,..)")
     public void checkAccessRights(JoinPoint joinPoint, Task task) {
         User authenticated = userService.getAuthenticatedUser();
-        if (authenticated.getResources().stream()
-                .noneMatch(r -> r.equals(task))){
+        if (task.getAuthorized()
+                .stream()
+                .noneMatch(u -> u.equals(authenticated))){
             throw new UnauthorizedResourceModificationException();
         }
     }

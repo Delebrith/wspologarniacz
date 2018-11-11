@@ -1,6 +1,5 @@
 package com.purplepanda.wspologarniacz.ranking;
 
-import com.purplepanda.wspologarniacz.user.User;
 import com.purplepanda.wspologarniacz.user.authorization.ModifiableResource;
 import lombok.*;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@PrimaryKeyJoinColumn(name = "id")
 public class Ranking extends ModifiableResource {
 
     @NotBlank

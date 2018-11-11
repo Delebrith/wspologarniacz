@@ -1,9 +1,11 @@
 package com.purplepanda.wspologarniacz.task;
 
 public interface TaskService {
-    void deleteTask(Long taskId);
+    Task findTask(Long taskId);
 
-    Task markAsDone(Long taskId);
+    void deleteTask(Task task);
 
-    Task modify(Long taskId, String name, String description);
+    Task markAsDone(Task task);
+
+    Task modify(Task task, String name, String description);
 }

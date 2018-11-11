@@ -18,8 +18,9 @@
         <addForeignKeyConstraint baseTableName="ranking"
                                  baseColumnNames="group_id" constraintName="ranking_group_fk"
                                  referencedTableName="group_" referencedColumnNames="id" />
-        <addAutoIncrement tableName="ranking" columnName="id"
-                          columnDataType="BIGINT" startWith="11" incrementBy="3"/>
+        <addForeignKeyConstraint baseTableName="ranking"
+                                 baseColumnNames="id" constraintName="ranking_resource_fk"
+                                 referencedTableName="modifiable_resource" referencedColumnNames="id" />
         <loadData encoding="UTF-8"
                   file="db/data/ranking.csv"
                   quotchar="'"

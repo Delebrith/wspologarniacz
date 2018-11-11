@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "group_id"}))
-class Affiliation {
+public class Affiliation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

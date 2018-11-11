@@ -8,8 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,7 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@PrimaryKeyJoinColumn(name = "id")
 public class Task extends ModifiableResource {
 
     @NotBlank

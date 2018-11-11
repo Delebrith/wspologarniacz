@@ -7,7 +7,6 @@
     <changeSet author="liquidbase" id="001">
         <createTable tableName="task">
             <column name="id" type="BIGINT">
-                <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="group_id" type="BIGINT">
             </column>
@@ -33,8 +32,9 @@
         <addForeignKeyConstraint baseTableName="task"
                                  baseColumnNames="group_id" constraintName="task_group_fk"
                                  referencedTableName="group_" referencedColumnNames="id" />
-        <addAutoIncrement tableName="task" columnName="id"
-                          columnDataType="BIGINT" startWith="10" incrementBy="3"/>
+        <addForeignKeyConstraint baseTableName="task"
+                                 baseColumnNames="id" constraintName="task_resource_fk"
+                                 referencedTableName="modifiable_resource" referencedColumnNames="id" />
         <loadData encoding="UTF-8"
                   file="db/data/task.csv"
                   quotchar="'"

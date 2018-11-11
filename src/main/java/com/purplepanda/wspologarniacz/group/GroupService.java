@@ -9,18 +9,28 @@ import java.util.List;
 
 public interface GroupService {
     List<Group> getAuthenticatedUsersGroups();
+
     Page<Group> searchGroupsByName(String name, Pageable pageable);
-    void inviteUser(Long groupId, Long userId);
-    void joinGroup(Long groupId);
-    void acceptInvitation(Long groupId);
-    void rejectInvitation(Long groupId);
-    void acceptUserIntoGroup(Long groupId, Long userId);
-    void rejectUserFromGroup(Long groupId, Long userId);
-    void leaveGroup(Long groupId);
+
+    void inviteUser(Group group, Long userId);
+
+    void joinGroup(Group group);
+
+    void acceptInvitation(Group group);
+
+    void rejectInvitation(Group group);
+
+    void acceptUserIntoGroup(Group group, Long userId);
+
+    void rejectUserFromGroup(Group group, Long userId);
+
+    void leaveGroup(Group group);
+
     Group createGroup(Group group);
+
     Group getGroup(Long groupId);
 
-    Group createTask(Long groupId, String name, String description);
+    Group createTask(Group group, Task task);
 
-    Group createRanking(Long groupId, Ranking ranking);
+    Group createRanking(Group group, Ranking ranking);
 }

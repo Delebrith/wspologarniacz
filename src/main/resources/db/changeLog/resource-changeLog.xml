@@ -7,29 +7,48 @@
     <changeSet author="liquidbase" id="001">
 
         <createTable tableName="modifiable_resource">
+            <column name="user_id" type="BIGINT">
+            </column>
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false" />
-            </column>
-            <column name="resource_id" type="BIGINT">
             </column>
         </createTable>
         <addAutoIncrement tableName="modifiable_resource" columnName="id"
                           columnDataType="BIGINT" startWith="100" incrementBy="1"/>
         <addForeignKeyConstraint baseTableName="modifiable_resource"
-                                 baseColumnNames="id" constraintName="resource_user_fk"
+                                 baseColumnNames="user_id" constraintName="resource_user_fk"
                                  referencedTableName="user_" referencedColumnNames="id" />
-        <addForeignKeyConstraint baseTableName="modifiable_resource"
-                                 baseColumnNames="resource_id" constraintName="resource_task_fk"
-                                 referencedTableName="task" referencedColumnNames="id" />
-        <addForeignKeyConstraint baseTableName="modifiable_resource"
-                                 baseColumnNames="resource_id" constraintName="resource_ranking_fk"
-                                 referencedTableName="ranking" referencedColumnNames="id" />
+        <addAutoIncrement tableName="modifiable_resource" columnName="id"
+                          columnDataType="BIGINT" startWith="100" incrementBy="1"/>
         <loadData encoding="UTF-8"
                   file="db/data/modifiable_resource.csv"
                   quotchar="'"
                   schemaName="public"
                   separator=","
                   tableName="modifiable_resource">
+        </loadData>
+
+
+        <createTable tableName="users_resources">
+            <column name="user_id" type="BIGINT">
+            </column>
+            <column name="resource_id" type="BIGINT">
+            </column>
+        </createTable>
+        <addAutoIncrement tableName="modifiable_resource" columnName="id"
+                          columnDataType="BIGINT" startWith="100" incrementBy="1"/>
+        <addForeignKeyConstraint baseTableName="users_resources"
+                                 baseColumnNames="user_id" constraintName="users_resources_user_fk"
+                                 referencedTableName="user_" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="users_resources"
+                                 baseColumnNames="resource_id" constraintName="users_resources_resource_fk"
+                                 referencedTableName="modifiable_resource" referencedColumnNames="id" />
+        <loadData encoding="UTF-8"
+                  file="db/data/users_resources.csv"
+                  quotchar="'"
+                  schemaName="public"
+                  separator=","
+                  tableName="users_resources">
         </loadData>
 
     </changeSet>
