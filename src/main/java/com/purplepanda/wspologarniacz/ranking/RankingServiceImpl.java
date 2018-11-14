@@ -1,0 +1,82 @@
+package com.purplepanda.wspologarniacz.ranking;
+
+import com.purplepanda.wspologarniacz.ranking.exception.CategoryNotFoundException;
+import com.purplepanda.wspologarniacz.ranking.exception.RankingNotFoundException;
+import com.purplepanda.wspologarniacz.user.UserService;
+import com.purplepanda.wspologarniacz.user.authorization.ResourceAccessAuthorization;
+import com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
+
+@Service
+class RankingServiceImpl implements RankingService {
+
+    private final RankingRepository rankingRepository;
+    private final UserService userServiceImpl;
+
+    @Autowired
+    public RankingServiceImpl(RankingRepository rankingRepository,
+                              UserService userServiceImpl) {
+        this.rankingRepository = rankingRepository;
+        this.userServiceImpl = userServiceImpl;
+    }
+
+    @Override
+    @ResourceModificationAuthorization
+    public Ranking addCategory(Ranking ranking, Category category) {
+        category.setScores(
+                ranking.getAuthorized().stream()
+                .map(u -> Score.builder()
+                        .user(u)
+                        .points(0)
+                        .build())
+                .collect(Collectors.toSet())
+        );
+        ranking.getCategories().add(category);
+        return rankingRepository.save(ranking);
+    }
+
+    @Override
+    @ResourceModificationAuthorization
+    public void deleteRanking(Ranking ranking) {
+        rankingRepository.delete(ranking);
+    }
+
+    @Override
+    @ResourceModificationAuthorization
+    public void deleteCategory(Ranking ranking, Long categoryId) {
+        Category removed = ranking.getCategories().stream()
+                .filter(c -> c.getId().equals(categoryId))
+                .findFirst()
+                .orElseThrow(CategoryNotFoundException::new);
+        ranking.getCategories().remove(removed);
+        rankingRepository.save(ranking);
+    }
+
+    @Override
+    @ResourceModificationAuthorization
+    public Ranking addPoints(Ranking ranking, Long categoryId, Integer points) {
+        ranking.getCategories().stream()
+                .filter(c -> c.getId().equals(categoryId))
+                .flatMap(c -> c.getScores().stream())
+                .filter(s -> s.getUser().equals(userServiceImpl.getAuthenticatedUser()))
+                .forEach(s -> s.setPoints(s.getPoints() + points));
+
+        return rankingRepository.save(ranking);
+    }
+
+    @Override
+    @ResourceAccessAuthorization
+    public Ranking getRanking(Long rankingId) {
+        return rankingRepository.findById(rankingId).orElseThrow(RankingNotFoundException::new);
+    }
+
+    @Override
+    @ResourceModificationAuthorization
+    public Ranking modify(Ranking ranking, String name) {
+        ranking.setName(name);
+        return rankingRepository.save(ranking);
+    }
+}

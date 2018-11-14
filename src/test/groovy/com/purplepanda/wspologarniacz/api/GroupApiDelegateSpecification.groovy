@@ -1,6 +1,7 @@
 package com.purplepanda.wspologarniacz.api
 
 import com.purplepanda.wspologarniacz.api.model.GroupDto
+import com.purplepanda.wspologarniacz.api.model.RankingDto
 import com.purplepanda.wspologarniacz.api.model.TaskDto
 import com.purplepanda.wspologarniacz.api.model.TaskInfoDto
 import com.purplepanda.wspologarniacz.group.Affiliation
@@ -11,6 +12,9 @@ import com.purplepanda.wspologarniacz.group.GroupService
 import com.purplepanda.wspologarniacz.group.exception.GroupNotFoundException
 import com.purplepanda.wspologarniacz.group.exception.InvalidAffiliationStateException
 import com.purplepanda.wspologarniacz.group.exception.NotGroupMemberException
+import com.purplepanda.wspologarniacz.ranking.Category
+import com.purplepanda.wspologarniacz.ranking.Ranking
+import com.purplepanda.wspologarniacz.ranking.RankingMapper
 import com.purplepanda.wspologarniacz.task.Task
 import com.purplepanda.wspologarniacz.task.TaskMapper
 import com.purplepanda.wspologarniacz.user.AuthorityName
@@ -38,6 +42,8 @@ class GroupApiDelegateSpecification extends Specification {
     private Group group
     private Task task
     private TaskInfoDto taskInfoDto
+    private Ranking ranking
+    private RankingDto rankingDto
 
     void setup() {
         userService = Mock(UserService.class)
@@ -73,6 +79,19 @@ class GroupApiDelegateSpecification extends Specification {
 
         taskInfoDto = new TaskInfoDto()
                 .name("task")
+
+        ranking = Ranking.builder()
+                .name("ranking")
+                .categories(Collections.singletonList(
+                Category.builder()
+                        .id(1L)
+                        .name("category")
+                        .build())
+                .toSet())
+                .build()
+        ranking.id = 1L
+
+        rankingDto = RankingMapper.getInstance().toDto(ranking)
     }
 
     void "authenticated user should get info on his groups"() {
@@ -477,6 +496,7 @@ class GroupApiDelegateSpecification extends Specification {
         given: "group with tasklist"
         group.getTasks().add(task)
         groupService.getGroup(group.id) >> group
+        groupService.getGroupTasks(group) >> group.tasks
 
         when: "user requests a tasklist"
         ResponseEntity<List<TaskDto>> responseEntity = groupApiDelegate.getTasks(group.id)
@@ -504,7 +524,7 @@ class GroupApiDelegateSpecification extends Specification {
         groupService.getGroup(group.id) >> group
         groupService.createTask(*_) >> group
 
-        when: "user adds new task to a tasklist"
+        when: "user adds new rankings to a group"
         ResponseEntity responseEntity = groupApiDelegate.createTask(group.id, taskInfoDto)
 
         then: "response is success"
@@ -517,8 +537,61 @@ class GroupApiDelegateSpecification extends Specification {
         userService.getAuthenticatedUser() >> authenticated
         groupService.getGroup(group.id) >> { throw new GroupNotFoundException() }
 
-        when: "user adds task"
+        when: "user adds ranking"
         ResponseEntity responseEntity = groupApiDelegate.createTask(group.id, taskInfoDto)
+
+        then: "exception is thrown"
+        thrown(GroupNotFoundException.class)
+    }
+
+    //get rankings
+    void "member should successfully get rankings of a group"() {
+        given: "group with rankings"
+        group.getRankings().add(ranking)
+        groupService.getGroup(group.id) >> group
+        groupService.getGroupRankings(group) >> group.rankings
+
+        when: "user requests a rankings"
+        ResponseEntity<List<RankingDto>> responseEntity = groupApiDelegate.getRankings(group.id)
+
+        then: "list is successfully returned"
+        responseEntity.statusCode.'2xxSuccessful'
+        responseEntity.body.asList().contains(RankingMapper.getInstance().toDto(ranking))
+    }
+
+    void "member should fail to get rankings of a non-exisitng group"() {
+        given: "non-existing group"
+        groupService.getGroup(_) >> { throw new GroupNotFoundException() }
+
+        when: "user requests a rankings"
+        ResponseEntity<List<RankingDto>> responseEntity = groupApiDelegate.getRankings(group.id)
+
+        then: "exception is thrown"
+        thrown(GroupNotFoundException.class)
+    }
+
+    //add rankings
+    void "member should successfully add ranking to his group"() {
+        given: "member and his group"
+        userService.getAuthenticatedUser() >> authenticated
+        groupService.getGroup(group.id) >> group
+        groupService.createRanking(*_) >> group
+
+        when: "user adds new task to a tasklist"
+        ResponseEntity responseEntity = groupApiDelegate.createRanking(group.id, rankingDto)
+
+        then: "response is success"
+        responseEntity.statusCode.'2xxSuccessful'
+        responseEntity.headers.getLocation() == URI.create("/group/" + group.id + "/rankings")
+    }
+
+    void "member should fail to add ranking for a non-existing group"() {
+        given: "non-existing group"
+        userService.getAuthenticatedUser() >> authenticated
+        groupService.getGroup(group.id) >> { throw new GroupNotFoundException() }
+
+        when: "user adds task"
+        ResponseEntity responseEntity = groupApiDelegate.createRanking(group.id, rankingDto)
 
         then: "exception is thrown"
         thrown(GroupNotFoundException.class)

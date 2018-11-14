@@ -1,4 +1,4 @@
-package com.purplepanda.wspologarniacz.base.config.web;
+package com.purplepanda.wspologarniacz.user.authorization;
 
 public class InvalidResourceStateException extends RuntimeException {
     public InvalidResourceStateException() {

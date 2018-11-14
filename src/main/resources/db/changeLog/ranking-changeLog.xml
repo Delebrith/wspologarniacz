@@ -72,6 +72,7 @@
                                  referencedTableName="user_" referencedColumnNames="id" />
         <addAutoIncrement tableName="score" columnName="id"
                           columnDataType="BIGINT" startWith="10" incrementBy="1"/>
+        <addUniqueConstraint tableName="score" columnNames="category_id,user_id"/>
         <loadData encoding="UTF-8"
                   file="db/data/score.csv"
                   quotchar="'"

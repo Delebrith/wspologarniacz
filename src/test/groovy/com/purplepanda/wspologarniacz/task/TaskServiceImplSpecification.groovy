@@ -1,14 +1,9 @@
 package com.purplepanda.wspologarniacz.task
 
-import com.purplepanda.wspologarniacz.api.TaskApiDelegate
-import com.purplepanda.wspologarniacz.api.TaskApiDelegateImpl
-import com.purplepanda.wspologarniacz.api.model.TaskInfoDto
-import com.purplepanda.wspologarniacz.base.config.web.InvalidResourceStateException
-import com.purplepanda.wspologarniacz.base.config.web.UnauthorizedResourceModificationException
+import com.purplepanda.wspologarniacz.user.authorization.InvalidResourceStateException
 import com.purplepanda.wspologarniacz.user.AuthorityName
 import com.purplepanda.wspologarniacz.user.User
 import com.purplepanda.wspologarniacz.user.UserService
-import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
 import java.time.LocalDateTime

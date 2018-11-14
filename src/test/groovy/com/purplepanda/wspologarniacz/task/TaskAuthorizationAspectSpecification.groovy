@@ -1,6 +1,6 @@
 package com.purplepanda.wspologarniacz.task
 
-import com.purplepanda.wspologarniacz.base.config.web.UnauthorizedResourceModificationException
+import com.purplepanda.wspologarniacz.user.authorization.UnauthorizedResourceAccessException
 import com.purplepanda.wspologarniacz.user.User
 import com.purplepanda.wspologarniacz.user.UserService
 import org.aspectj.lang.JoinPoint
@@ -37,17 +37,17 @@ class TaskAuthorizationAspectSpecification extends Specification {
         taskAuthorizationAspect = new TaskAuthorizationAspect(userService)
     }
 
-    void "unauthorized user should cause exception"() {
+    void "unauthorized user modification should cause exception"() {
         given: "unauthorized user"
         userService.getAuthenticatedUser() >> authenticated
         task.authorized = Collections.emptySet()
         when: "access rights are checked"
         taskAuthorizationAspect.checkAccessRights(joinPoint, task)
         then: "exception is thrown"
-        thrown(UnauthorizedResourceModificationException.class)
+        thrown(UnauthorizedResourceAccessException.class)
     }
 
-    void "authorized user should not cause exception"() {
+    void "authorized user modification should not cause exception"() {
         given: "authorized user"
         userService.getAuthenticatedUser() >> authenticated
         task.authorized = Collections.singletonList(authenticated).toSet()
@@ -55,4 +55,5 @@ class TaskAuthorizationAspectSpecification extends Specification {
         taskAuthorizationAspect.checkAccessRights(joinPoint, task)
         then: "no exception is thrown"
     }
+
 }

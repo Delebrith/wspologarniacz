@@ -1,8 +1,7 @@
 package com.purplepanda.wspologarniacz.api
 
 import com.purplepanda.wspologarniacz.api.model.TaskInfoDto
-import com.purplepanda.wspologarniacz.base.config.web.InvalidResourceStateException
-import com.purplepanda.wspologarniacz.base.config.web.UnauthorizedResourceModificationException
+import com.purplepanda.wspologarniacz.user.authorization.InvalidResourceStateException
 import com.purplepanda.wspologarniacz.task.Task
 import com.purplepanda.wspologarniacz.task.TaskNotFoundException
 import com.purplepanda.wspologarniacz.task.TaskService

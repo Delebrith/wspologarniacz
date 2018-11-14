@@ -29,5 +29,7 @@ public interface RankingMapper {
     @Mapping(target = "id", ignore = true)
     Score fromDto(ScoreDto dto);
 
+    @Mapping(target = "user.password", constant = "***")
+    @Mapping(target = "user.authorities", ignore = true)
     ScoreDto toDto(Score entity);
 }

@@ -1334,7 +1334,7 @@
             "description": "Ranking id"
           },
           {
-            "name": "name",
+            "name": "category",
             "in": "body",
             "required": true,
             "schema": {
@@ -1411,9 +1411,9 @@
         }
       }
     },
-    "/ranking/{rankingId}/category/{categoryId}/changePoints/{userId}/by":{
+    "/ranking/{rankingId}/category/{categoryId}/addPoints":{
       "post": {
-        "operationId": "changePoints",
+        "operationId": "addPoints",
         "tags": [
           "ranking"
         ],
@@ -1439,21 +1439,13 @@
             "description": "category id"
           },
           {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "type": "integer",
-            "format": "int64",
-            "description": "user id"
-          },
-          {
             "name": "points",
             "in": "query",
             "required": true,
             "type": "integer",
             "format": "int32",
-            "minimum": -10,
-            "maximum": 10,
+            "minimum": 0,
+            "maximum": 100,
             "description": "points"
           },
           {
@@ -1470,13 +1462,10 @@
             "description": "If score was modified successfully"
           },
           "401": {
-            "description": "If user is not authorized to modify this category"
+            "description": "If user is not authorized to modify this ranking"
           },
           "404": {
-            "description": "If category or user is not found"
-          },
-          "409": {
-            "description": "If user is not a part of the ranking"
+            "description": "If category or ranking is not found"
           },
           "400": {
             "description": "If error occurs"

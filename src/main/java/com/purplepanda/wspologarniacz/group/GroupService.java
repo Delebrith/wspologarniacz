@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface GroupService {
     List<Group> getAuthenticatedUsersGroups();
@@ -32,5 +33,9 @@ public interface GroupService {
 
     Group createTask(Group group, Task task);
 
+    Set<Task> getGroupTasks(Group group);
+
     Group createRanking(Group group, Ranking ranking);
+
+    Set<Ranking> getGroupRankings(Group group);
 }

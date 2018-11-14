@@ -193,11 +193,23 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     @GroupMemberAccess
+    public Set<Task> getGroupTasks(Group group) {
+        return group.getTasks();
+    }
+
+    @Override
+    @GroupMemberAccess
     public Group createRanking(Group group, Ranking ranking) {
         validateRankingParticipants(group, ranking);
         group.getRankings().add(ranking);
         groupRepository.save(group);
         return null;
+    }
+
+    @Override
+    @GroupMemberAccess
+    public Set<Ranking> getGroupRankings(Group group) {
+        return group.getRankings();
     }
 
     private Set<User> getGroupMembers(Group group) {

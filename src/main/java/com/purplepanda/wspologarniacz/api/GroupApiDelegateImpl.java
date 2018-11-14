@@ -124,7 +124,8 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
 
     @Override
     public ResponseEntity<List<TaskDto>> getTasks(Long groupId) {
-        return ResponseEntity.ok(groupService.getGroup(groupId).getTasks().stream()
+        Group group = groupService.getGroup(groupId);
+        return ResponseEntity.ok(groupService.getGroupTasks(group).stream()
             .map(taskMapper::toDto)
             .collect(Collectors.toList())
         );
@@ -141,6 +142,10 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
 
     @Override
     public ResponseEntity<List<RankingDto>> getRankings(Long groupId) {
-        return null;
+        Group group = groupService.getGroup(groupId);
+        return ResponseEntity.ok(groupService.getGroupRankings(group).stream()
+                .map(rankingMapper::toDto)
+                .collect(Collectors.toList())
+        );
     }
 }

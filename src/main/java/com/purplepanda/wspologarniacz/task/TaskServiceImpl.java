@@ -1,9 +1,10 @@
 package com.purplepanda.wspologarniacz.task;
 
-import com.purplepanda.wspologarniacz.base.config.web.InvalidResourceStateException;
+import com.purplepanda.wspologarniacz.user.authorization.InvalidResourceStateException;
 import com.purplepanda.wspologarniacz.group.GroupMemberListUpdatedEvent;
 import com.purplepanda.wspologarniacz.user.UserService;
 import com.purplepanda.wspologarniacz.user.authorization.ResourceAccessAuthorization;
+import com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -28,13 +29,13 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @ResourceAccessAuthorization
+    @ResourceModificationAuthorization
     public void deleteTask(Task task) {
         taskRepository.delete(task);
     }
 
     @Override
-    @ResourceAccessAuthorization
+    @ResourceModificationAuthorization
     public Task markAsDone(Task task) {
         if (task.getStatus().equals(TaskStatus.DONE))
             throw new InvalidResourceStateException();
@@ -45,7 +46,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    @ResourceAccessAuthorization
+    @ResourceModificationAuthorization
     public Task modify(Task task, String name, String description) {
         if (task.getStatus().equals(TaskStatus.DONE))
             throw new InvalidResourceStateException();
