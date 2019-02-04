@@ -1537,7 +1537,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number",
+          "type": "integer",
           "format": "int64"
         },
         "email": {
@@ -1592,7 +1592,7 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number",
+          "type": "integer",
           "format": "int64"
         },
         "name": {

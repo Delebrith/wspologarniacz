@@ -18,7 +18,9 @@ public class RankingAccessAuthorizationAspect {
         this.userServiceImpl = userServiceImpl;
     }
 
-    @Before(value = "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization) && args(ranking,..)")
+    @Before(value =
+            "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization)" +
+            " && args(ranking,..)")
     public void checkModificationAccessRights(JoinPoint joinPoint, Ranking ranking) {
         if (ranking.getAuthorized().stream()
                 .noneMatch(a -> a.equals(userServiceImpl.getAuthenticatedUser()))){
@@ -26,7 +28,9 @@ public class RankingAccessAuthorizationAspect {
         }
     }
 
-    @AfterReturning(value = "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceAccessAuthorization)", returning = "ranking")
+    @AfterReturning(value =
+            "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceAccessAuthorization)",
+            returning = "ranking")
     public void checkReadAccessRights(JoinPoint joinPoint, Ranking ranking) {
         if (ranking.getAuthorized()
                 .stream()

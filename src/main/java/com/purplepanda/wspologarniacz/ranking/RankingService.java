@@ -5,7 +5,7 @@ public interface RankingService {
 
     void deleteRanking(Ranking ranking);
 
-    void deleteCategory(Ranking ranking, Long categoryId);
+    Ranking deleteCategory(Ranking ranking, Long categoryId);
 
     Ranking addPoints(Ranking ranking, Long categoryId, Integer points);
 

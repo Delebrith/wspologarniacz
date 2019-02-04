@@ -4,7 +4,6 @@ import com.purplepanda.wspologarniacz.user.authorization.UnauthorizedResourceAcc
 import com.purplepanda.wspologarniacz.user.User;
 import com.purplepanda.wspologarniacz.user.UserService;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,8 @@ public class TaskAuthorizationAspect {
         this.userService = userService;
     }
 
-    @Before(value = "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization) && args(task,..)")
+    @Before(value = "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization) " +
+            "&& args(task,..)")
     public void checkAccessRights(JoinPoint joinPoint, Task task) {
         User authenticated = userService.getAuthenticatedUser();
         if (task.getAuthorized()

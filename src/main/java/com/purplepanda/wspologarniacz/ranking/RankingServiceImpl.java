@@ -46,13 +46,13 @@ class RankingServiceImpl implements RankingService {
 
     @Override
     @ResourceModificationAuthorization
-    public void deleteCategory(Ranking ranking, Long categoryId) {
+    public Ranking deleteCategory(Ranking ranking, Long categoryId) {
         Category removed = ranking.getCategories().stream()
                 .filter(c -> c.getId().equals(categoryId))
                 .findFirst()
                 .orElseThrow(CategoryNotFoundException::new);
         ranking.getCategories().remove(removed);
-        rankingRepository.save(ranking);
+        return rankingRepository.save(ranking);
     }
 
     @Override
@@ -60,7 +60,9 @@ class RankingServiceImpl implements RankingService {
     public Ranking addPoints(Ranking ranking, Long categoryId, Integer points) {
         ranking.getCategories().stream()
                 .filter(c -> c.getId().equals(categoryId))
-                .flatMap(c -> c.getScores().stream())
+                .findAny()
+                .orElseThrow(CategoryNotFoundException::new)
+                .getScores().stream()
                 .filter(s -> s.getUser().equals(userServiceImpl.getAuthenticatedUser()))
                 .forEach(s -> s.setPoints(s.getPoints() + points));
 
