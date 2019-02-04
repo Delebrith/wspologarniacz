@@ -33,8 +33,6 @@
             <column name="resource_id" type="BIGINT">
             </column>
         </createTable>
-        <addAutoIncrement tableName="modifiable_resource" columnName="id"
-                          columnDataType="BIGINT" startWith="100" incrementBy="1"/>
         <addForeignKeyConstraint baseTableName="users_resources"
                                  baseColumnNames="user_id" constraintName="users_resources_user_fk"
                                  referencedTableName="user_" referencedColumnNames="id" />
