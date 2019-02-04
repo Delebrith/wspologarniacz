@@ -19,6 +19,6 @@ public class Schedule extends ModifiableResource {
     @NotBlank
     private String name;
 
-    
+
 }
 
