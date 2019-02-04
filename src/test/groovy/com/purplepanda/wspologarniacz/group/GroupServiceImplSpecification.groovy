@@ -8,6 +8,7 @@ import com.purplepanda.wspologarniacz.user.AuthorityName
 import com.purplepanda.wspologarniacz.user.User
 import com.purplepanda.wspologarniacz.user.UserService
 import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -21,6 +22,7 @@ class GroupServiceImplSpecification extends Specification {
     //mocked
     private UserService userService
     private GroupRepository groupRepository
+    private ApplicationEventPublisher eventPublisher
 
     //tested
     private GroupService groupService
@@ -32,9 +34,10 @@ class GroupServiceImplSpecification extends Specification {
     private Task task
 
     void setup() {
+        eventPublisher = Mock(ApplicationEventPublisher.class)
         userService = Mock(UserService.class)
         groupRepository = Mock(GroupRepository.class)
-        groupService = new GroupServiceImpl(userService, groupRepository)
+        groupService = new GroupServiceImpl(userService, groupRepository, eventPublisher)
 
         authenticated = User.builder()
                 .id(1L)
@@ -58,10 +61,10 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
 
         task = Task.builder()
-                .id(1L)
                 .name("task")
                 .updateTime(LocalDateTime.now())
                 .build()
+        task.id = 1L
     }
 
     void "authenticated user should get info on his groups"() {
@@ -162,26 +165,12 @@ class GroupServiceImplSpecification extends Specification {
         )
         userService.getAuthenticatedUser() >> authenticated
         userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "inviting other user"
-        groupService.inviteUser(group.id, processed.id)
+        groupService.inviteUser(group, processed.id)
 
         then: "other user is invited"
         group.affiliations.any {a -> a.getUser() == processed && a.state == AffiliationState.PENDING_INVITATION}
-    }
-
-    void "non-member should fail to invite user to his group"() {
-        given: "not a member of group"
-        userService.getAuthenticatedUser() >> authenticated
-        userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
-
-        when: "inviting other user"
-        groupService.inviteUser(group.id, processed.id)
-
-        then: "exception is thrown"
-        thrown(NotGroupMemberException.class)
     }
 
 
@@ -203,29 +192,13 @@ class GroupServiceImplSpecification extends Specification {
         )
         userService.getAuthenticatedUser() >> authenticated
         userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "inviting other user"
-        groupService.inviteUser(group.id, processed.id)
+        groupService.inviteUser(group, processed.id)
 
         then: "exception is thrown"
         thrown(InvalidAffiliationStateException.class)
     }
-
-
-    void "member should fail to invite user to non-existing group"() {
-        given: "non existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "inviting other user"
-        groupService.inviteUser(group.id, processed.id)
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
-    }
-
 
     void "member should fail to invite non-existing user to his group"() {
         given: "member of group and non-existing user"
@@ -233,7 +206,7 @@ class GroupServiceImplSpecification extends Specification {
         userService.getUser(processed.id) >> Optional.empty()
 
         when: "inviting other user"
-        groupService.inviteUser(group.id, processed.id)
+        groupService.inviteUser(group, processed.id)
 
         then: "exception is thrown"
         thrown(UserNotFoundException.class)
@@ -258,28 +231,13 @@ class GroupServiceImplSpecification extends Specification {
         )
         userService.getAuthenticatedUser() >> authenticated
         userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "accepting other user"
-        groupService.acceptUserIntoGroup(group.id, processed.id)
+        groupService.acceptUserIntoGroup(group, processed.id)
 
         then: "other user is accepted"
         group.affiliations.any {a -> a.getUser() == processed && a.state == AffiliationState.MEMBER}
-        group.tasks.every {task -> task.authorized.contains(processed)}
 
-    }
-
-    void "non-member should fail to accept user to his group"() {
-        given: "not a member of group"
-        userService.getAuthenticatedUser() >> authenticated
-        userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
-
-        when: "accepting other user"
-        groupService.acceptUserIntoGroup(group.id, processed.id)
-
-        then: "exception is thrown"
-        thrown(NotGroupMemberException.class)
     }
 
 
@@ -301,27 +259,12 @@ class GroupServiceImplSpecification extends Specification {
         )
         userService.getAuthenticatedUser() >> authenticated
         userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "accepting other user"
-        groupService.acceptUserIntoGroup(group.id, processed.id)
+        groupService.acceptUserIntoGroup(group, processed.id)
 
         then: "exception is thrown"
         thrown(InvalidAffiliationStateException.class)
-    }
-
-
-    void "member should fail to accept user to non-existing group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "accepting other user"
-        groupService.acceptUserIntoGroup(group.id, processed.id)
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
     }
 
 
@@ -331,7 +274,7 @@ class GroupServiceImplSpecification extends Specification {
         userService.getUser(processed.id) >> Optional.empty()
 
         when: "accepting other user"
-        groupService.acceptUserIntoGroup(group.id, processed.id)
+        groupService.acceptUserIntoGroup(group, processed.id)
 
         then: "exception is thrown"
         thrown(UserNotFoundException.class)
@@ -356,27 +299,14 @@ class GroupServiceImplSpecification extends Specification {
         )
         userService.getAuthenticatedUser() >> authenticated
         userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "rejecting other user"
-        groupService.rejectUserFromGroup(group.id, processed.id)
+        groupService.rejectUserFromGroup(group, processed.id)
 
         then: "user is rejected"
         group.affiliations.every {affiliation -> affiliation.getUser() != processed}
     }
 
-    void "non-member should fail to reject user from his group"() {
-        given: "not a member of group"
-        userService.getAuthenticatedUser() >> authenticated
-        userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
-
-        when: "rejecting other user"
-        groupService.rejectUserFromGroup(group.id, processed.id)
-
-        then: "exception is thrown"
-        thrown(NotGroupMemberException.class)
-    }
 
     void "member should fail to reject user not waiting for acceptance to his group"() {
         given: "member of group and user not waiting for acceptance"
@@ -396,27 +326,12 @@ class GroupServiceImplSpecification extends Specification {
         )
         userService.getAuthenticatedUser() >> authenticated
         userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "rejecting other user"
-        groupService.rejectUserFromGroup(group.id, processed.id)
+        groupService.rejectUserFromGroup(group, processed.id)
 
         then: "exception is thrown"
         thrown(InvalidAffiliationStateException.class)
-    }
-
-
-    void "member should fail to reject user to non-existing group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        userService.getUser(processed.id) >> Optional.ofNullable(processed)
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "rejecting other user"
-        groupService.rejectUserFromGroup(group.id, processed.id)
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
     }
 
 
@@ -426,25 +341,13 @@ class GroupServiceImplSpecification extends Specification {
         userService.getUser(processed.id) >> Optional.empty()
 
         when: "rejecting other user"
-        groupService.rejectUserFromGroup(group.id, processed.id)
+        groupService.rejectUserFromGroup(group, processed.id)
 
         then: "exception is thrown"
         thrown(UserNotFoundException.class)
     }
 
     //join
-    void "non-member should successfully request to join a group"() {
-        given: "not a member"
-        userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
-
-        when: "joining group"
-        groupService.joinGroup(group.id)
-
-        then: "affiliation is made"
-        group.affiliations.any {
-            affiliation -> affiliation.user == authenticated && affiliation.state == AffiliationState.WAITING_FOR_ACCEPTANCE}
-    }
 
     void "affiliated user should fail to request to join a group"() {
         given: "affiliated user"
@@ -456,26 +359,14 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
         )
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "joining group"
-        groupService.joinGroup(group.id)
+        groupService.joinGroup(group)
 
         then: "exception is thrown"
         thrown(InvalidAffiliationStateException.class)
     }
 
-    void "user should fail to request to join a non-existing group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "joining group"
-        groupService.joinGroup(group.id)
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
-    }
 
     //accept invitation
     void "invited user should successfully accept invitation to a group"() {
@@ -488,15 +379,13 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
         )
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "joining group"
-        groupService.acceptInvitation(group.id)
+        groupService.acceptInvitation(group)
 
         then: "user becomes member"
         group.affiliations.any {
             affiliation -> affiliation.user == authenticated && affiliation.state == AffiliationState.MEMBER}
-        group.tasks.every {task -> task.authorized.contains(authenticated)}
     }
 
     void "not invited user should fail accept invitation to a group"() {
@@ -509,26 +398,14 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
         )
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "joining group"
-        groupService.acceptInvitation(group.id)
+        groupService.acceptInvitation(group)
 
         then: "exception is thrown"
         thrown(InvalidAffiliationStateException.class)
     }
 
-    void "invited user should fail to accept invitation to a non-existing group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "accepting invitation"
-        groupService.acceptInvitation(group.id)
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
-    }
 
     //reject invitation
     void "invited user should successfully reject invitation to a group"() {
@@ -541,10 +418,9 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
         )
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "rejecting invitation"
-        groupService.rejectInvitation(group.id)
+        groupService.rejectInvitation(group)
 
         then: "affiliation is deleted"
         group.affiliations.every {affiliation -> affiliation.user != authenticated}
@@ -560,26 +436,14 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
         )
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "rejecting invitation"
-        groupService.rejectInvitation(group.id)
+        groupService.rejectInvitation(group)
 
         then: "exception is thrown"
         thrown(InvalidAffiliationStateException.class)
     }
 
-    void "invited user should fail to reject invitation to a non-existing group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "rejecting invitation"
-        groupService.rejectInvitation(group.id)
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
-    }
 
     //leave
     void "affiliated user should successfully leave group"() {
@@ -592,39 +456,25 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
         )
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "leaving group"
-        groupService.leaveGroup(group.id)
+        groupService.leaveGroup(group)
 
         then: "affiliation is deleted"
         group.affiliations.every {affiliation -> affiliation.user != authenticated}
-        group.tasks.every {task -> !task.authorized.contains(authenticated)}
     }
 
     void "non-affiliated user should fail to leave a group"() {
         given: "non-affiliated user"
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
 
         when: "leaving group"
-        groupService.leaveGroup(group.id)
+        groupService.leaveGroup(group)
 
         then: "exception is thrown"
         thrown(InvalidAffiliationStateException.class)
     }
 
-    void "affiliated user should fail to leave a non-existing group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "leaving group"
-        groupService.leaveGroup(group.id)
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
-    }
 
     //add tasks
     void "member should successfully add tasks to his group"() {
@@ -637,37 +487,13 @@ class GroupServiceImplSpecification extends Specification {
                 .build()
         )
         userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
         groupRepository.save(group) >> group
 
         when: "user adds new task to a tasklist"
-        Group result = groupService.createTask(group.id, "name", "description")
+        Group result = groupService.createTask(group, task)
 
         then: "task is created"
         !result.tasks.isEmpty()
     }
 
-    void "member should fail to add task for a non-existing group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.empty()
-
-        when: "user adds task"
-        Group result = groupService.createTask(group.id, "name", "description")
-
-        then: "exception is thrown"
-        thrown(GroupNotFoundException.class)
-    }
-
-    void "not a member should fail to add task for a group"() {
-        given: "non-existing group"
-        userService.getAuthenticatedUser() >> authenticated
-        groupRepository.findById(group.id) >> Optional.ofNullable(group)
-
-        when: "user adds task"
-        Group result = groupService.createTask(group.id, "name", "description")
-
-        then: "exception is thrown"
-        thrown(NotGroupMemberException.class)
-    }
 }

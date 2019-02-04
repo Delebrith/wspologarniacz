@@ -1,14 +1,9 @@
 package com.purplepanda.wspologarniacz.task
 
-import com.purplepanda.wspologarniacz.api.TaskApiDelegate
-import com.purplepanda.wspologarniacz.api.TaskApiDelegateImpl
-import com.purplepanda.wspologarniacz.api.model.TaskInfoDto
-import com.purplepanda.wspologarniacz.base.config.web.InvalidResourceStateException
-import com.purplepanda.wspologarniacz.base.config.web.UnauthorizedResourceModificationException
+import com.purplepanda.wspologarniacz.user.authorization.InvalidResourceStateException
 import com.purplepanda.wspologarniacz.user.AuthorityName
 import com.purplepanda.wspologarniacz.user.User
 import com.purplepanda.wspologarniacz.user.UserService
-import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -40,11 +35,11 @@ class TaskServiceImplSpecification extends Specification {
                 .build()
 
         task = Task.builder()
-                .id(1L)
                 .name("task")
                 .status(TaskStatus.ADDED)
                 .updateTime(LocalDateTime.now())
                 .build()
+        task.id = 1L
     }
 
     //mark as done
@@ -56,35 +51,11 @@ class TaskServiceImplSpecification extends Specification {
         taskRepository.save(task) >> task
 
         when: "user marks task as done"
-        Task result = taskService.markAsDone(task.id)
+        Task result = taskService.markAsDone(task)
 
         then: "task is marked"
         result.id == task.id
         result.status == TaskStatus.DONE
-    }
-
-    void "unauthorized user should fail to mark task as done"() {
-        given: "user not authorized to modify the task"
-        userService.getAuthenticatedUser() >> authenticated
-        taskRepository.findById(task.id) >> Optional.ofNullable(task)
-
-        when: "user marks task as done"
-        taskService.markAsDone(task.id)
-
-        then: "exception is thrown"
-        thrown(UnauthorizedResourceModificationException.class)
-    }
-
-    void "user should fail to mark non-existing task as done"() {
-        given: "non-existing task"
-        userService.getAuthenticatedUser() >> authenticated
-        taskRepository.findById(task.id) >> Optional.empty()
-
-        when: "user marks task as done"
-        taskService.markAsDone(task.id)
-
-        then: "exception is thrown"
-        thrown(TaskNotFoundException.class)
     }
 
     void "user should fail to mark done task as done"() {
@@ -95,7 +66,7 @@ class TaskServiceImplSpecification extends Specification {
         taskRepository.findById(task.id) >> Optional.ofNullable(task)
 
         when: "user marks task as done"
-        taskService.markAsDone(task.id)
+        taskService.markAsDone(task)
 
         then: "exception is thrown"
         thrown(InvalidResourceStateException.class)
@@ -112,41 +83,12 @@ class TaskServiceImplSpecification extends Specification {
         taskRepository.save(task) >> task
 
         when: "user modifies task"
-        Task result = taskService.modify(task.id, newName, newDescription)
+        Task result = taskService.modify(task, newName, newDescription)
 
         then: "task is modified"
         result.id == task.id
         result.name == newName
         result.description == newDescription
-    }
-
-    void "unauthorized user should fail to modify task"() {
-        given: "user not authorized to modify the task"
-        userService.getAuthenticatedUser() >> authenticated
-        String newName = "new name"
-        String newDescription = "new description"
-        taskRepository.findById(task.id) >> Optional.ofNullable(task)
-        taskRepository.save(task) >> task
-
-        when: "user modifies task"
-        taskService.modify(task.id, newName, newDescription)
-
-        then: "exception is thrown"
-        thrown(UnauthorizedResourceModificationException.class)
-    }
-
-    void "user should fail to modify non-existing task"() {
-        given: "non-existing task"
-        userService.getAuthenticatedUser() >> authenticated
-        String newName = "new name"
-        String newDescription = "new description"
-        taskRepository.findById(task.id) >> Optional.empty()
-
-        when: "user marks task as done"
-        taskService.modify(task.id, newName, newDescription)
-
-        then: "exception is thrown"
-        thrown(TaskNotFoundException.class)
     }
 
     void "user should fail to modify done task"() {
@@ -159,34 +101,21 @@ class TaskServiceImplSpecification extends Specification {
         taskRepository.findById(task.id) >> Optional.ofNullable(task)
 
         when: "user modifies task"
-        taskService.modify(task.id, newName, newDescription)
+        taskService.modify(task, newName, newDescription)
 
         then: "exception is thrown"
         thrown(InvalidResourceStateException.class)
     }
 
     //delete
-    void "unauthorized user should fail to delete task"() {
-        given: "user not authorized to modify the task"
-        userService.getAuthenticatedUser() >> authenticated
-        taskRepository.findById(task.id) >> Optional.ofNullable(task)
-
-        when: "user deletes task"
-        taskService.deleteTask(task.id)
-
-        then: "exception is thrown"
-        thrown(UnauthorizedResourceModificationException.class)
-    }
-
-    void "user should fail to delete non-existing task"() {
+    void "user should delete existing task"() {
         given: "non-existing task"
         userService.getAuthenticatedUser() >> authenticated
-        taskRepository.findById(task.id) >> Optional.empty()
+        taskRepository.findById(task.id) >> task
 
         when: "user deletes task"
-        taskService.deleteTask(task.id)
+        taskService.deleteTask(task)
 
-        then: "exception is thrown"
-        thrown(TaskNotFoundException.class)
+        then: "operation is performed"
     }
 }
