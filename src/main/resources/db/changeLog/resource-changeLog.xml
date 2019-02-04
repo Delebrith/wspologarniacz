@@ -18,8 +18,6 @@
         <addForeignKeyConstraint baseTableName="modifiable_resource"
                                  baseColumnNames="user_id" constraintName="resource_user_fk"
                                  referencedTableName="user_" referencedColumnNames="id" />
-        <addAutoIncrement tableName="modifiable_resource" columnName="id"
-                          columnDataType="BIGINT" startWith="100" incrementBy="1"/>
         <loadData encoding="UTF-8"
                   file="db/data/modifiable_resource.csv"
                   quotchar="'"
