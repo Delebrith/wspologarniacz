@@ -32,6 +32,13 @@ class RankingAccessAuthorizationAspectSpecification extends Specification {
                 Category.builder()
                         .id(1L)
                         .name("category")
+                        .scores(Collections.singletonList(
+                            Score.builder()
+                                .id(1L)
+                                .user(authenticated)
+                                .points(1)
+                                .build()
+                        ).toSet())
                         .build())
                 .toSet())
                 .build()
@@ -66,7 +73,7 @@ class RankingAccessAuthorizationAspectSpecification extends Specification {
     void "unauthorized user modifying should cause exception"() {
         given: "unauthorized user"
         userService.getAuthenticatedUser() >> authenticated
-        ranking.authorized = Collections.emptySet()
+        ranking.categories = Collections.emptySet()
         when: "access rights are checked"
         rankingAccessAuthorizationAspect.checkModificationAccessRights(joinPoint, ranking)
         then: "exception is thrown"

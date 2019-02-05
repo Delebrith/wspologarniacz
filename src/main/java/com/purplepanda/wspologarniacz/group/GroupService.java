@@ -1,6 +1,7 @@
 package com.purplepanda.wspologarniacz.group;
 
 import com.purplepanda.wspologarniacz.ranking.Ranking;
+import com.purplepanda.wspologarniacz.schedule.Schedule;
 import com.purplepanda.wspologarniacz.task.Task;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,8 @@ public interface GroupService {
     Group createRanking(Group group, Ranking ranking);
 
     Set<Ranking> getGroupRankings(Group group);
+
+    Group createSchedule(Group group, Schedule schedule);
+
+    Set<Schedule> getGroupSchedules(Group group);
 }

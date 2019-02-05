@@ -4,6 +4,7 @@ import com.purplepanda.wspologarniacz.group.authorization.GroupMemberAccess;
 import com.purplepanda.wspologarniacz.group.exception.GroupNotFoundException;
 import com.purplepanda.wspologarniacz.group.exception.InvalidAffiliationStateException;
 import com.purplepanda.wspologarniacz.ranking.Ranking;
+import com.purplepanda.wspologarniacz.schedule.Schedule;
 import com.purplepanda.wspologarniacz.task.Task;
 import com.purplepanda.wspologarniacz.user.User;
 import com.purplepanda.wspologarniacz.user.UserService;
@@ -201,6 +202,7 @@ public class GroupServiceImpl implements GroupService {
     @GroupMemberAccess
     public Group createRanking(Group group, Ranking ranking) {
         validateRankingParticipants(group, ranking);
+        ranking.setAuthorized(getGroupMembers(group));
         group.getRankings().add(ranking);
         groupRepository.save(group);
         return null;
@@ -210,6 +212,21 @@ public class GroupServiceImpl implements GroupService {
     @GroupMemberAccess
     public Set<Ranking> getGroupRankings(Group group) {
         return group.getRankings();
+    }
+
+    @Override
+    @GroupMemberAccess
+    public Group createSchedule(Group group, Schedule schedule) {
+        validateScheduleParticipants(group, schedule);
+        schedule.setAuthorized(getGroupMembers(group));
+        group.getSchedules().add(schedule);
+        return groupRepository.save(group);
+    }
+
+    @Override
+    @GroupMemberAccess
+    public Set<Schedule> getGroupSchedules(Group group) {
+        return group.getSchedules();
     }
 
     private Set<User> getGroupMembers(Group group) {
@@ -224,6 +241,15 @@ public class GroupServiceImpl implements GroupService {
         if (!ranking.getCategories().stream()
                 .flatMap(c -> c.getScores().stream())
                 .map(s -> s.getUser())
+                .allMatch(u -> possibleParticipants.contains(u))) {
+            throw new IllegalArgumentException("Participants of the ranking must be group members");
+        }
+    }
+
+    private void validateScheduleParticipants(Group group, Schedule schedule) {
+        Set<User> possibleParticipants  = getGroupMembers(group);
+        if (!schedule.getOrder().stream()
+                .flatMap(c -> c.getUsers().stream())
                 .allMatch(u -> possibleParticipants.contains(u))) {
             throw new IllegalArgumentException("Participants of the ranking must be group members");
         }

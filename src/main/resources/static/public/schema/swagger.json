@@ -25,6 +25,10 @@
     {
       "name": "ranking",
       "description": "Rankings-related operations"
+    },
+    {
+      "name": "schedule",
+      "description": "Schedules-related operations"
     }
   ],
   "securityDefinitions": {
@@ -1472,6 +1476,47 @@
           }
         }
       }
+    },
+    "/schedule/{scheduleId}/submit":{
+      "post": {
+        "operationId": "submitAction",
+        "tags": [
+          "schedule"
+        ],
+        "summary": "Submit completion of scheduled task",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "schedule id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If action submitted successfully"
+          },
+          "401": {
+            "description": "If user is not authorized to modify this schedule"
+          },
+          "404": {
+            "description": "If schedule is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -1742,6 +1787,71 @@
       "required": [
         "user", "points"
       ]
+    },
+    "Schedule": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "counter": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "period": {
+          "type": "string"
+        },
+        "reminderTime": {
+          "type": "string"
+        },
+        "order": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Ordinal"
+          }
+        }
+      },
+      "required": [
+        "name", "period", "reminderTime", "order"
+      ]
+    },
+    "Ordinal": {
+      "type": "object",
+      "properties": {
+        "index": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "users": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/user"
+          }
+        }
+      },
+      "required": [
+        "index", "users"
+      ]
+    },
+    "HistoryRecord": {
+      "type": "object",
+      "properties": {
+        "updateTime": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user": {
+          "$ref": "#/definitions/user"
+        }
+      },
+      "required": [
+        "updateTime", "user"
+      ]
     }
+  }
   }
 }

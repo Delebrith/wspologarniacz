@@ -22,7 +22,9 @@ public class RankingAccessAuthorizationAspect {
             "@annotation(com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization)" +
             " && args(ranking,..)")
     public void checkModificationAccessRights(JoinPoint joinPoint, Ranking ranking) {
-        if (ranking.getAuthorized().stream()
+        if (ranking.getCategories().stream()
+                .flatMap(c -> c.getScores().stream())
+                .map(s -> s.getUser())
                 .noneMatch(a -> a.equals(userServiceImpl.getAuthenticatedUser()))){
             throw new UnauthorizedResourceAccessException();
         }

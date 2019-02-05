@@ -1,6 +1,7 @@
 package com.purplepanda.wspologarniacz.group;
 
 import com.purplepanda.wspologarniacz.ranking.Ranking;
+import com.purplepanda.wspologarniacz.schedule.Schedule;
 import com.purplepanda.wspologarniacz.task.Task;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,5 +41,10 @@ public class Group {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id")
     private Set<Ranking> rankings = new HashSet<>();
+
+    @Builder.Default
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "group_id")
+    private Set<Schedule> schedules = new HashSet<>();
 
 }
