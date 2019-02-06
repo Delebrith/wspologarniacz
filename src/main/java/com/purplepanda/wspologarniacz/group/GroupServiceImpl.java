@@ -204,8 +204,7 @@ public class GroupServiceImpl implements GroupService {
         validateRankingParticipants(group, ranking);
         ranking.setAuthorized(getGroupMembers(group));
         group.getRankings().add(ranking);
-        groupRepository.save(group);
-        return null;
+        return groupRepository.save(group);
     }
 
     @Override

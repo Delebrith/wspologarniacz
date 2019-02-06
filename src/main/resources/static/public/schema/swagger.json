@@ -1030,6 +1030,100 @@
         }
       }
     },
+    "/group/{groupId}/schedule":{
+      "post": {
+        "operationId": "createSchedule",
+        "tags": [
+          "group"
+        ],
+        "summary": "Create new schedule and add it to the group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          },
+          {
+            "name": "scheduleDto",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Schedule"
+            },
+            "description": "Task details"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "If schedule was created successfully"
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/group/{groupId}/schedules":{
+      "get": {
+        "operationId": "getSchedules",
+        "tags": [
+          "group"
+        ],
+        "summary": "Get group's schedules list",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "Group id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If schedules list was found successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Schedule"
+              }
+            }
+          },
+          "404": {
+            "description": "If group is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
     "/task/{taskId}/delete":{
       "delete": {
         "operationId": "deleteTask",
@@ -1242,8 +1336,20 @@
           {
             "name": "name",
             "in": "query",
-            "required": true,
+            "required": false,
             "type": "string",
+            "description": "Ranking's new name"
+          },
+          {
+            "name": "participants",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            },
             "description": "Ranking's new name"
           }
         ],
@@ -1277,6 +1383,9 @@
           {
             "JWT": []
           }
+        ],
+        "consumes": [
+          "application/json"
         ],
         "produces": [
           "application/json"
@@ -1508,6 +1617,206 @@
           },
           "401": {
             "description": "If user is not authorized to modify this schedule"
+          },
+          "404": {
+            "description": "If schedule is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/schedule/{scheduleId}/delete":{
+      "delete": {
+        "operationId": "deleteSchedule",
+        "tags": [
+          "schedule"
+        ],
+        "summary": "Delete schedule",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "schedule id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "If schedule deleted successfully"
+          },
+          "401": {
+            "description": "If user is not authorized to modify this schedule"
+          },
+          "404": {
+            "description": "If schedule is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/schedule/{scheduleId}/modify":{
+      "post": {
+        "operationId": "modifySchedule",
+        "tags": [
+          "schedule"
+        ],
+        "summary": "Modify schedule",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "schedule id"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "new schedule name"
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "new schedule period"
+          },
+          {
+            "name": "reminderTime",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "new schedule period"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If schedule modified successfully"
+          },
+          "401": {
+            "description": "If user is not authorized to modify this schedule"
+          },
+          "404": {
+            "description": "If schedule is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/schedule/{scheduleId}/reorder":{
+      "post": {
+        "operationId": "reorderSchedule",
+        "tags": [
+          "schedule"
+        ],
+        "summary": "Reorder schedule",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "schedule id"
+          },
+          {
+            "name": "order",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Ordinal"
+              }
+            },
+            "description": "schedule id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If schedule reordered successfully"
+          },
+          "401": {
+            "description": "If user is not authorized to modify this schedule"
+          },
+          "404": {
+            "description": "If schedule is not found"
+          },
+          "400": {
+            "description": "If error occurs"
+          }
+        }
+      }
+    },
+    "/schedule/{scheduleId}/history":{
+      "get": {
+        "operationId": "getHistory",
+        "tags": [
+          "schedule"
+        ],
+        "summary": "Get history",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "scheduleId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int64",
+            "description": "schedule id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "If history acquired successfully"
+          },
+          "401": {
+            "description": "If user is not authorized to see this schedule"
           },
           "404": {
             "description": "If schedule is not found"

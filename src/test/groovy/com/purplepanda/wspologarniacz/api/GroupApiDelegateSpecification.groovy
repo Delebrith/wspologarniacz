@@ -2,6 +2,7 @@ package com.purplepanda.wspologarniacz.api
 
 import com.purplepanda.wspologarniacz.api.model.GroupDto
 import com.purplepanda.wspologarniacz.api.model.RankingDto
+import com.purplepanda.wspologarniacz.api.model.ScheduleDto
 import com.purplepanda.wspologarniacz.api.model.TaskDto
 import com.purplepanda.wspologarniacz.api.model.TaskInfoDto
 import com.purplepanda.wspologarniacz.group.Affiliation
@@ -15,17 +16,23 @@ import com.purplepanda.wspologarniacz.group.exception.NotGroupMemberException
 import com.purplepanda.wspologarniacz.ranking.Category
 import com.purplepanda.wspologarniacz.ranking.Ranking
 import com.purplepanda.wspologarniacz.ranking.RankingMapper
+import com.purplepanda.wspologarniacz.schedule.Ordinal
+import com.purplepanda.wspologarniacz.schedule.Schedule
+import com.purplepanda.wspologarniacz.schedule.ScheduleMapper
 import com.purplepanda.wspologarniacz.task.Task
 import com.purplepanda.wspologarniacz.task.TaskMapper
 import com.purplepanda.wspologarniacz.user.AuthorityName
 import com.purplepanda.wspologarniacz.user.User
 import com.purplepanda.wspologarniacz.user.UserService
 import com.purplepanda.wspologarniacz.user.exception.UserNotFoundException
+import org.hibernate.criterion.Order
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import spock.lang.Specification
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Period
 
 class GroupApiDelegateSpecification extends Specification {
 
@@ -44,6 +51,8 @@ class GroupApiDelegateSpecification extends Specification {
     private TaskInfoDto taskInfoDto
     private Ranking ranking
     private RankingDto rankingDto
+    private Schedule schedule
+    private ScheduleDto scheduleDto
 
     void setup() {
         userService = Mock(UserService.class)
@@ -92,6 +101,21 @@ class GroupApiDelegateSpecification extends Specification {
         ranking.id = 1L
 
         rankingDto = RankingMapper.getInstance().toDto(ranking)
+
+        schedule = Schedule.builder()
+                .name("schedule")
+                .counter(1)
+                .period(Period.ofDays(7))
+                .reminderTime(LocalTime.now())
+                .order(Collections.singletonList(
+                    Ordinal.builder()
+                        .id(1L)
+                        .users(Collections.singletonList(authenticated).toSet())
+                        .build()
+                    ).toSet())
+                .build()
+
+        scheduleDto = ScheduleMapper.getInstance().toDto(schedule)
     }
 
     void "authenticated user should get info on his groups"() {
@@ -597,4 +621,31 @@ class GroupApiDelegateSpecification extends Specification {
         thrown(GroupNotFoundException.class)
     }
 
+
+    //add schedules
+    void "member should successfully add schedule to his group"() {
+        given: "member and his group"
+        userService.getAuthenticatedUser() >> authenticated
+        groupService.getGroup(group.id) >> group
+        groupService.createSchedule(*_) >> group
+
+        when: "user adds new task to a tasklist"
+        ResponseEntity responseEntity = groupApiDelegate.createSchedule(group.id, scheduleDto)
+
+        then: "response is success"
+        responseEntity.statusCode.'2xxSuccessful'
+        responseEntity.headers.getLocation() == URI.create("/group/" + group.id + "/schedules")
+    }
+
+    void "member should fail to add schedule for a non-existing group"() {
+        given: "non-existing group"
+        userService.getAuthenticatedUser() >> authenticated
+        groupService.getGroup(group.id) >> { throw new GroupNotFoundException() }
+
+        when: "user adds task"
+        ResponseEntity responseEntity = groupApiDelegate.createSchedule(group.id, scheduleDto)
+
+        then: "exception is thrown"
+        thrown(GroupNotFoundException.class)
+    }
 }

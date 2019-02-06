@@ -2,6 +2,7 @@ package com.purplepanda.wspologarniacz.api;
 
 import com.purplepanda.wspologarniacz.api.model.CategoryDto;
 import com.purplepanda.wspologarniacz.api.model.RankingDto;
+import com.purplepanda.wspologarniacz.api.model.UserDto;
 import com.purplepanda.wspologarniacz.ranking.Ranking;
 import com.purplepanda.wspologarniacz.ranking.RankingMapper;
 import com.purplepanda.wspologarniacz.ranking.RankingService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.List;
 
 @Component
 public class RankingApiDelegateImpl implements RankingApiDelegate {
@@ -58,7 +60,7 @@ public class RankingApiDelegateImpl implements RankingApiDelegate {
     }
 
     @Override
-    public ResponseEntity<RankingDto> modify(Long rankingId, String name) {
+    public ResponseEntity<RankingDto> modify(Long rankingId, String name, List<UserDto> participants) {
         Ranking ranking = rankingService.getRanking(rankingId);
         return ResponseEntity.ok(
                rankingMapper.toDto(rankingService.modify(ranking, name))

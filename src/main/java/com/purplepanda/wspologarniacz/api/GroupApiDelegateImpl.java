@@ -1,13 +1,11 @@
 package com.purplepanda.wspologarniacz.api;
 
-import com.purplepanda.wspologarniacz.api.model.GroupDto;
-import com.purplepanda.wspologarniacz.api.model.RankingDto;
-import com.purplepanda.wspologarniacz.api.model.TaskDto;
-import com.purplepanda.wspologarniacz.api.model.TaskInfoDto;
+import com.purplepanda.wspologarniacz.api.model.*;
 import com.purplepanda.wspologarniacz.group.Group;
 import com.purplepanda.wspologarniacz.group.GroupMapper;
 import com.purplepanda.wspologarniacz.group.GroupService;
 import com.purplepanda.wspologarniacz.ranking.RankingMapper;
+import com.purplepanda.wspologarniacz.schedule.ScheduleMapper;
 import com.purplepanda.wspologarniacz.task.TaskMapper;
 import com.purplepanda.wspologarniacz.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,7 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
     private final GroupMapper groupMapper = GroupMapper.getInstance();
     private final TaskMapper taskMapper = TaskMapper.getInstance();
     private final RankingMapper rankingMapper = RankingMapper.getInstance();
+    private final ScheduleMapper scheduleMapper = ScheduleMapper.getInstance();
 
     @Autowired
     public GroupApiDelegateImpl(GroupService groupService, UserService userService) {
@@ -145,6 +144,24 @@ public class GroupApiDelegateImpl implements GroupApiDelegate {
         Group group = groupService.getGroup(groupId);
         return ResponseEntity.ok(groupService.getGroupRankings(group).stream()
                 .map(rankingMapper::toDto)
+                .collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> createSchedule(Long groupId, ScheduleDto scheduleDto) {
+        Group group = groupService.getGroup(groupId);
+        Group modified = groupService.createSchedule(group, scheduleMapper.fromDto(scheduleDto));
+        return ResponseEntity.created(
+                URI.create("/group/" + modified.getId() + "/schedules"))
+                .build();
+    }
+
+    @Override
+    public ResponseEntity<List<ScheduleDto>> getSchedules(Long groupId) {
+        Group group = groupService.getGroup(groupId);
+        return ResponseEntity.ok(groupService.getGroupSchedules(group).stream()
+                .map(scheduleMapper::toDto)
                 .collect(Collectors.toList())
         );
     }

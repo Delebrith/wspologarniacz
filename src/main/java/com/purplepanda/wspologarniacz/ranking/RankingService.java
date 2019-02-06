@@ -1,5 +1,10 @@
 package com.purplepanda.wspologarniacz.ranking;
 
+import com.purplepanda.wspologarniacz.user.User;
+
+import java.util.List;
+import java.util.Optional;
+
 public interface RankingService {
     Ranking addCategory(Ranking ranking, Category category);
 
@@ -11,5 +16,5 @@ public interface RankingService {
 
     Ranking getRanking(Long rankingId);
 
-    Ranking modify(Ranking ranking, String name);
+    Ranking modify(Ranking ranking, Optional<String> name, List<User> participants);
 }

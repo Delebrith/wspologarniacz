@@ -2,12 +2,18 @@ package com.purplepanda.wspologarniacz.ranking;
 
 import com.purplepanda.wspologarniacz.ranking.exception.CategoryNotFoundException;
 import com.purplepanda.wspologarniacz.ranking.exception.RankingNotFoundException;
+import com.purplepanda.wspologarniacz.user.User;
 import com.purplepanda.wspologarniacz.user.UserService;
+import com.purplepanda.wspologarniacz.user.authorization.InvalidModificationAttemptException;
+import com.purplepanda.wspologarniacz.user.authorization.InvalidResourceStateException;
 import com.purplepanda.wspologarniacz.user.authorization.ResourceAccessAuthorization;
 import com.purplepanda.wspologarniacz.user.authorization.ResourceModificationAuthorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,8 +83,14 @@ class RankingServiceImpl implements RankingService {
 
     @Override
     @ResourceModificationAuthorization
-    public Ranking modify(Ranking ranking, String name) {
-        ranking.setName(name);
+    public Ranking modify(Ranking ranking, Optional<String> name, List<User> participants) {
+        name.ifPresent(ranking::setName);
+        if (!participants.isEmpty()){
+            if (participants.stream().anyMatch(p -> !ranking.getAuthorized().contains(p)))
+                throw new InvalidModificationAttemptException();
+
+            //TODO
+        }
         return rankingRepository.save(ranking);
     }
 }
